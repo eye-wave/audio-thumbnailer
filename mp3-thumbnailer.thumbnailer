@@ -1,0 +1,4 @@
+[Thumbnailer Entry]
+TryExec=/usr/bin/mp3-thumbnailer
+Exec=/usr/bin/mp3-thumbnailer -i %i -o %o -a crop -p triangle
+MimeType=audio/mpeg;audio/flac;audio/wavpack;audio/webm;audio/mp4;audio/aac;audio/x-matroska;audio/x-opus+ogg
