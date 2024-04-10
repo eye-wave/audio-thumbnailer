@@ -26,6 +26,9 @@ pub fn draw_waveform(samples: &[f32], out_path: &Path, size: &(u32, u32), color:
         .map(|(x, &y)| (x as f64, y as f64))
         .collect();
 
+    let mut new_color = *color;
+    new_color.3 = 0.2;
+
     let series = LineSeries::new(data_to_draw, color);
     chart.draw_series(series).unwrap();
 }
