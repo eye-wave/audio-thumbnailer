@@ -11,9 +11,9 @@ id3 = "1.13.1"
 image = "0.25.1"
 
 [profile.release]
-# codegen-units = 1
-# debug = false
-# incremental = false
-# lto = true
-# opt-level = 3
-# panic = "abort"
+codegen-units = 1
+debug = false
+incremental = false
+lto = true
+opt-level = 3
+panic = "abort"
