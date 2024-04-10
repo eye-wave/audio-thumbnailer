@@ -16,8 +16,8 @@ pub struct Args {
     pub output: String,
 
     ///quality of the generated image ( 0 = the worst, 10 = lossless )
-    #[arg(short, long)]
-    pub quality: Option<u8>,
+    // #[arg(short, long)]
+    // pub quality: Option<u8>,
 
     ///How to treat aspect ratio
     ///"crop" - crops edges to get 1:1 aspect ratio
