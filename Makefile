@@ -1,5 +1,5 @@
 #!make
-.PHONY: install format lint
+.PHONY: install format lint test
 
 install:
 	cargo build --release
@@ -11,3 +11,8 @@ format:
 
 lint:
 	cargo clippy
+
+test:
+	rm test/thumb.jpg
+	cargo run -- -i test/song.mp3 -o test/thumb.jpg -p triangle -a crop
+	sxiv test/thumb.jpg
