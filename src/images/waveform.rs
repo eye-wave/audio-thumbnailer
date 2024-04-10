@@ -2,9 +2,13 @@ use plotters::prelude::*;
 use std::path::Path;
 
 pub fn draw_waveform(samples: &[f32], out_path: &Path, size: &(u32, u32), color: &RGBAColor) {
-    let quality = samples.len() / (size.0 * 100) as usize;
+    let mut quality = samples.len() / (size.0 * 100) as usize;
     let root = BitMapBackend::new(out_path, *size).into_drawing_area();
     root.fill(&TRANSPARENT).unwrap();
+
+    if quality < 1 {
+        quality = 1
+    }
 
     let range_x = 0.0..(samples.len() / quality) as f64;
     let range_y = -1.0..1.0;
