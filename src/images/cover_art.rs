@@ -2,16 +2,14 @@ use id3::{self, Tag};
 use image::{imageops::FilterType, DynamicImage, GenericImageView};
 use std::path::Path;
 
-use crate::aspect_ratio::AspectRatio;
+use crate::args::aspect_ratio::AspectRatio;
 
 pub fn read_tags(path: &Path) -> Option<Tag> {
-    match id3::Tag::read_from_path(path) {
-        Ok(tag) => Some(tag),
-        Err(err) => {
-            println!("{:?}", err);
-            None
-        }
+    if let Ok(tag) = id3::Tag::read_from_path(path) {
+        return Some(tag);
     }
+
+    None
 }
 
 pub fn extract_cover_art_data(tag: &Tag) -> Option<&[u8]> {

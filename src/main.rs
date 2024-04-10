@@ -1,53 +1,30 @@
-mod images;
-use std::path::Path;
-
-use aspect_ratio::parse_aspect_ratio_arg;
+use args::aspect_ratio::parse_aspect_ratio_arg;
+use args::interpol::parse_interpol_arg;
+use args::size::parse_dimensions;
+use args::Args;
 use clap::Parser;
+use color::parse_hex_color;
+use decoder::decode_audio_from_file;
 use image::DynamicImage;
-use images::cover_art::{extract_cover_art_data, load_and_resize, read_tags};
-use interpol::parse_interpol_arg;
+use images::wavetable::{draw_wavetable, is_wavetable};
+use images::{
+    cover_art::{extract_cover_art_data, load_and_resize, read_tags},
+    waveform::draw_waveform,
+};
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
+use std::{io::BufReader, path::Path};
 
-mod aspect_ratio;
-mod interpol;
-
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// input file name
-    #[arg(short, long)]
-    input: String,
-
-    /// output file name of the generated thumbnail
-    #[arg(short, long)]
-    output: String,
-
-    /// quality of the generated image ( 0 = the worst, 10 = lossless )
-    #[arg(short, long)]
-    quality: Option<u8>,
-
-    /// how to treat aspect ratio
-    /// "crop" - crops edges to get 1:1 aspect ratio
-    /// "stretch" - stretches image to 1:1
-    /// "auto" - leaves as is
-    /// default = "auto"
-    #[arg(short, long, verbatim_doc_comment)]
-    aspect_ratio: Option<String>,
-
-    ///thumbnail size
-    #[arg(short, long, default_value_t = 64)]
-    size: u8,
-
-    /// what interpolation algorithm to use
-    /// "lanczos3", "gaussian", "nearest", "triangle",
-    /// default = "lanczos3"
-    #[arg(short = 'p', long, verbatim_doc_comment)]
-    interpol: Option<String>,
-}
+mod args;
+mod color;
+mod decoder;
+mod images;
 
 fn main() {
     let args = Args::parse();
     let aspect_ratio = parse_aspect_ratio_arg(&args.aspect_ratio);
     let interpol = parse_interpol_arg(&args.interpol);
+    let color = parse_hex_color(&args.color).unwrap();
 
     let in_path = Path::new(&args.input);
     let out_path = Path::new(&args.output);
@@ -68,5 +45,27 @@ fn main() {
         cover_art
             .save_with_format(out_path, image::ImageFormat::Png)
             .unwrap();
+
+        return;
+    }
+
+    if let Ok(file) = File::open(in_path) {
+        let mut reader = BufReader::new(file);
+        let mut test_chunk = vec![0u8; 256];
+
+        reader.read_exact(&mut test_chunk).unwrap();
+        reader.seek(SeekFrom::Start(0)).unwrap();
+
+        let samples = decode_audio_from_file(reader);
+
+        if let Some(samples) = samples {
+            if is_wavetable(&test_chunk) {
+                let wavetable_size = parse_dimensions(&args.wavetable_size);
+                draw_wavetable(&samples, out_path, &wavetable_size, &color);
+            } else {
+                let waveform_size = parse_dimensions(&args.waveform_size);
+                draw_waveform(&samples, out_path, &waveform_size, &color);
+            }
+        }
     }
 }
