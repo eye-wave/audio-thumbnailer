@@ -3,8 +3,8 @@
 
 install:
 	cargo build --release
-	sudo cp target/release/audio-thumbnailer /usr/bin/mp3-thumbnailer
-	sudo cp mp3-thumbnailer.thumbnailer /usr/share/thumbnailers
+	sudo cp target/release/audio-thumbnailer /usr/bin/
+	sudo cp audio.thumbnailer /usr/share/thumbnailers
 
 format:
 	cargo fmt
