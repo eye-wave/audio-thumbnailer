@@ -31,7 +31,6 @@ pub struct Args {
     pub size: u8,
 
     ///wave color
-    ///works both for wavetable and waveform
     #[arg(short, long, default_value_t = String::from("#ff0000"))]
     pub color: String,
 
@@ -39,10 +38,6 @@ pub struct Args {
     ///"lanczos3", "gaussian", "nearest", "triangle",
     #[arg(short = 'p', long, verbatim_doc_comment,default_value_t = String::from("lanczos3"))]
     pub interpol: String,
-
-    ///wavetable width and height
-    #[arg(long, verbatim_doc_comment,default_value_t=String::from("96:48"))]
-    pub wavetable_size: String,
 
     ///waveform width and height
     #[arg(long, verbatim_doc_comment,default_value_t=String::from("96:48"))]

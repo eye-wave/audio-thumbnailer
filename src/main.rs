@@ -6,13 +6,9 @@ use clap::Parser;
 use color::parse_hex_color;
 use decoder::decode_audio_from_file;
 use image::DynamicImage;
-use images::wavetable::{draw_wavetable, is_wavetable};
-use images::{
-    cover_art::{extract_cover_art_data, load_and_resize, read_tags},
-    waveform::draw_waveform,
-};
+use images::cover_art::{extract_cover_art_data, load_and_resize, read_tags};
+use images::waveform::draw_waveform;
 use std::fs::File;
-use std::io::{Read, Seek, SeekFrom};
 use std::{io::BufReader, path::Path};
 
 mod args;
@@ -50,22 +46,12 @@ fn main() {
     }
 
     if let Ok(file) = File::open(in_path) {
-        let mut reader = BufReader::new(file);
-        let mut test_chunk = vec![0u8; 256];
-
-        reader.read_exact(&mut test_chunk).unwrap();
-        reader.seek(SeekFrom::Start(0)).unwrap();
-
+        let reader = BufReader::new(file);
         let samples = decode_audio_from_file(reader);
 
         if let Some(samples) = samples {
-            if is_wavetable(&test_chunk) {
-                let wavetable_size = parse_dimensions(&args.wavetable_size);
-                draw_wavetable(&samples, out_path, &wavetable_size, &color);
-            } else {
-                let waveform_size = parse_dimensions(&args.waveform_size);
-                draw_waveform(&samples, out_path, &waveform_size, &color);
-            }
+            let waveform_size = parse_dimensions(&args.waveform_size);
+            draw_waveform(&samples, out_path, &waveform_size, &color);
         }
     }
 }
