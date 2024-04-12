@@ -14,6 +14,10 @@ use symphonia_core::probe::ProbeResult;
 
 impl AudioDecoder {
     pub fn create_probe(&mut self, path: &Path) -> Option<ProbeResult> {
+        if path.ends_with(".wv") {
+            unimplemented!()
+        }
+
         let probe = get_probe();
         let file = File::open(path).unwrap();
         let media_source =
@@ -25,6 +29,7 @@ impl AudioDecoder {
             &FormatOptions::default(),
             &MetadataOptions::default(),
         ) {
+            self.current_file = Some(path.display().to_string());
             return Some(probe_result);
         }
 
