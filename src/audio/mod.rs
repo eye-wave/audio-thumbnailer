@@ -1,18 +1,18 @@
-use std::path::Path;
-
 mod symphonia;
 
-pub fn decode_audio(path: &Path) -> Option<Vec<f32>> {
-    match path.extension().and_then(|ext| ext.to_str()) {
-        Some("opus") => unimplemented!(),
-        Some("wv") => unimplemented!(),
-        _ => symphonia::decode_audio(path),
+pub struct AudioDecoder {
+    current_file: Option<String>,
+}
+
+impl AudioDecoder {
+    pub fn new() -> AudioDecoder {
+        AudioDecoder { current_file: None }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::decode_audio;
+    use super::AudioDecoder;
     use rstest::rstest;
     use std::path::Path;
 
@@ -34,10 +34,14 @@ mod tests {
         let path = Path::new(file);
         println!("Testing {}", file);
 
-        if let Some(samples) = decode_audio(path) {
+        let mut audio_decoder = AudioDecoder::new();
+        let mut probe = audio_decoder.create_probe(path).unwrap();
+
+        if let Some(samples) = audio_decoder.decode_audio(&mut probe) {
             assert!(!samples.is_empty());
-        } else {
-            panic!("Failed to decode audio file: {:?}", path);
+            return;
         }
+
+        panic!("Failed to decode audio file: {:?}", path);
     }
 }

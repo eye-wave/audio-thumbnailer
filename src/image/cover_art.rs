@@ -45,9 +45,6 @@ pub fn load_and_resize(
                 )
             }
         },
-        Err(err) => {
-            println!("{:?}", err);
-            None
-        }
+        Err(_) => None,
     }
 }
