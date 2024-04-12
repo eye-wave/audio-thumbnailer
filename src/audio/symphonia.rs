@@ -14,7 +14,7 @@ use symphonia_core::probe::ProbeResult;
 
 impl AudioDecoder {
     pub fn create_probe(&mut self, path: &Path) -> Option<ProbeResult> {
-        if path.ends_with(".wv") {
+        if path.extension().is_some_and(|ext| ext == "wv") {
             unimplemented!()
         }
 
