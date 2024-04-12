@@ -1,4 +1,4 @@
 [Thumbnailer Entry]
 TryExec=/usr/bin/audio-thumbnailer
-Exec=/usr/bin/audio-thumbnailer -i %i -o %o -a crop -p triangle -c "#7de8ad"
-MimeType=audio/mpeg;audio/flac;audio/wavpack;audio/x-wav;audio/webm;audio/mp4;audio/aac;audio/x-matroska;audio/x-opus+ogg
+Exec=/usr/bin/audio-thumbnailer -i %i -o %o -a crop -p triangle
+MimeType=audio/aac;audio/flac;audio/mp4;audio/mpeg;audio/x-caf;audio/x-matroska;audio/x-vorbis+ogg;audio/x-wav

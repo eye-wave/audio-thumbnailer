@@ -2,7 +2,7 @@ pub mod aspect_ratio;
 pub mod interpol;
 pub mod size;
 
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -14,6 +14,10 @@ pub struct Args {
     ///output file name of the generated thumbnail
     #[arg(short, long)]
     pub output: String,
+
+    ///ignore covert art and generate just the waveform
+    #[arg(long,action=ArgAction::SetTrue)]
+    pub no_cover: Option<bool>,
 
     ///quality of the generated image ( 0 = the worst, 10 = lossless )
     // #[arg(short, long)]

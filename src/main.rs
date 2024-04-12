@@ -4,17 +4,17 @@ use args::size::parse_dimensions;
 use args::Args;
 use clap::Parser;
 use color::parse_hex_color;
-use decoder::decode_audio_from_file;
-use image::DynamicImage;
-use images::cover_art::{extract_cover_art_data, load_and_resize, read_tags};
-use images::waveform::draw_waveform;
-use std::fs::File;
-use std::{io::BufReader, path::Path};
+use decoders::decode_audio;
+use demuxers::get_cover_art;
+use image::cover_art::load_and_resize;
+use image::waveform::draw_waveform;
+use std::path::Path;
 
 mod args;
 mod color;
-mod decoder;
-mod images;
+mod decoders;
+mod demuxers;
+mod image;
 
 fn main() {
     let args = Args::parse();
@@ -25,33 +25,20 @@ fn main() {
     let in_path = Path::new(&args.input);
     let out_path = Path::new(&args.output);
 
-    let tags = read_tags(in_path);
-
-    let cover_art: Option<DynamicImage> = if let Some(tags) = tags {
-        if let Some(buffer) = extract_cover_art_data(&tags) {
-            load_and_resize(buffer, args.size, &aspect_ratio, &interpol)
-        } else {
-            None
+    if !args.no_cover.unwrap_or(false) {
+        if let Some(image_data) = get_cover_art(in_path) {
+            if let Some(image) = load_and_resize(&image_data, args.size, &aspect_ratio, &interpol) {
+                image
+                    .save_with_format(out_path, ::image::ImageFormat::Png)
+                    .unwrap();
+                return;
+            }
         }
-    } else {
-        None
-    };
-
-    if let Some(cover_art) = cover_art {
-        cover_art
-            .save_with_format(out_path, image::ImageFormat::Png)
-            .unwrap();
-
-        return;
     }
 
-    if let Ok(file) = File::open(in_path) {
-        let reader = BufReader::new(file);
-        let samples = decode_audio_from_file(reader);
-
-        if let Some(samples) = samples {
-            let waveform_size = parse_dimensions(&args.waveform_size);
-            draw_waveform(&samples, out_path, &waveform_size, &color);
-        }
+    let samples = decode_audio(in_path);
+    if let Some(samples) = samples {
+        let waveform_size = parse_dimensions(&args.waveform_size);
+        draw_waveform(&samples, out_path, &waveform_size, &color);
     }
 }

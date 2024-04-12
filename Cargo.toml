@@ -1,6 +1,6 @@
 [package]
 name = "audio-thumbnailer"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -8,10 +8,10 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
 hex_color = "3.0.0"
-id3 = "1.13.1"
 image = "0.25.1"
 plotters = "0.3.5"
-rodio = "0.17.3"
+symphonia = { version = "0.5.4", features = ["all"] }
+symphonia-core = "0.5.4"
 
 [profile.release]
 codegen-units = 1
@@ -20,3 +20,6 @@ incremental = false
 lto = true
 opt-level = 3
 panic = "abort"
+
+[dev-dependencies]
+rstest = "0.19.0"

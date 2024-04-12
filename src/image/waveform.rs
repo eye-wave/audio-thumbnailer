@@ -2,6 +2,10 @@ use plotters::prelude::*;
 use std::path::Path;
 
 pub fn draw_waveform(samples: &[f32], out_path: &Path, size: &(u32, u32), color: &RGBAColor) {
+    if samples.is_empty() {
+        panic!("samples cannot be empty");
+    }
+
     let mut quality = samples.len() / (size.0 * 100) as usize;
     let root = BitMapBackend::new(out_path, *size).into_drawing_area();
     root.fill(&TRANSPARENT).unwrap();
