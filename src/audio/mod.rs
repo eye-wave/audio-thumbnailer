@@ -19,16 +19,16 @@ mod tests {
     #[cfg(test)]
     #[rstest(
         file,
-        case("test/fish.aac"),
-        case("test/fish.caf"),
-        case("test/fish.flac"),
-        case("test/fish.m4a"),
-        case("test/fish.mka"),
-        case("test/fish.mp3"),
-        case("test/fish.ogg"),
-        case("test/fish.opus"),
-        case("test/fish.wav"),
-        case("test/fish.wv")
+        case("test/fish/fish.aac"),
+        case("test/fish/fish.caf"),
+        case("test/fish/fish.flac"),
+        case("test/fish/fish.m4a"),
+        case("test/fish/fish.mka"),
+        case("test/fish/fish.mp3"),
+        case("test/fish/fish.ogg"),
+        case("test/fish/fish.opus"),
+        case("test/fish/fish.wav"),
+        case("test/fish/fish.wv")
     )]
     fn test_decode_audio(file: &str) {
         let path = Path::new(file);
