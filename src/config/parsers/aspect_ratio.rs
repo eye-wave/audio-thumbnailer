@@ -1,7 +1,7 @@
 use std::str::FromStr;
-use serde_derive::Deserialize;
 
-#[derive(Debug, Clone, Copy, Deserialize)]
+#[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub enum AspectRatio {
     Auto,
     Crop,
@@ -21,7 +21,9 @@ impl FromStr for AspectRatio {
             "auto" => Ok(Self::Auto),
             "crop" => Ok(Self::Crop),
             "stretch" => Ok(Self::Stretch),
-            _ => Err(String::from("Invalid aspect ratio. Possible values are: \"auto\", \"crop\", \"stretch\"")),
+            _ => Err(String::from(
+                "Invalid aspect ratio. Possible values are: \"auto\", \"crop\", \"stretch\"",
+            )),
         }
     }
 }

@@ -1,21 +1,31 @@
-
-mod error;
 mod config;
+mod error;
 
-#[cfg(feature="config_file")]
+use clap::Parser;
+use config::{Args, Config};
+
+#[cfg(feature = "config_file")]
 use config::Config;
 
-pub use error::{Error,Result};
+pub use error::{Error, Result};
 
 fn main() -> Result<()> {
-    println!("Hello world!");
-    
-    #[cfg(feature="config_file")]
+    #[allow(unused_mut)]
+    let mut config = Config::default();
+    let args = Args::parse();
+
+    #[cfg(feature = "config_file")]
     {
-        let config = Config::load()?;
-        println!("{config:#?}");
-    
+        match Config::load() {
+            Ok(conf) => config = conf,
+            Err(err) => {
+                println!("{}", err);
+            }
+        }
     }
+
+    println!("{config:#?}");
+    println!("{args:#?}");
 
     Ok(())
 }

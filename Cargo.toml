@@ -19,7 +19,7 @@ thiserror = "1.0.62"
 toml = { version = "0.8.14", optional = true }
 
 [features]
-default = ["config_file"]
+default = []
 config_file = ["toml","serde_derive","dirs"]
 
 [profile.release]

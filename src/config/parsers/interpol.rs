@@ -1,7 +1,7 @@
 use std::str::FromStr;
-use serde_derive::Deserialize;
 
-#[derive(Debug, Clone, Copy, Deserialize)]
+#[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub enum InterpolationType {
     Lanczos3,
     CatmullRom,

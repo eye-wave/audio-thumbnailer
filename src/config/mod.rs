@@ -4,33 +4,35 @@ mod file;
 use parsers::{aspect_ratio::AspectRatio, interpol::InterpolationType};
 use std::path::PathBuf;
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct Config {
-    cover_settings: CoverSettings,
-    audio_analyzer_settings: AudioAnalyzerSettings,
-    waveform_settings: WaveformSettings,
-    thumbnail_settings: ThumbnailsSettings,
-    debug: Option<DebugSettings>
+    cover_settings: Option<CoverSettings>,
+    audio_analyzer_settings: Option<AudioAnalyzerSettings>,
+    waveform_settings: Option<WaveformSettings>,
+    thumbnail_settings: Option<ThumbnailsSettings>,
+    debug: Option<DebugSettings>,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
-            cover_settings: CoverSettings::default(),
-            audio_analyzer_settings: AudioAnalyzerSettings::default(),
-            thumbnail_settings: ThumbnailsSettings::default(),
-            waveform_settings: WaveformSettings::default(),
-            debug: None,
+            cover_settings: Some(CoverSettings::default()),
+            audio_analyzer_settings: Some(AudioAnalyzerSettings::default()),
+            thumbnail_settings: Some(ThumbnailsSettings::default()),
+            waveform_settings: Some(WaveformSettings::default()),
+            debug: Some(DebugSettings::default()),
         }
     }
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct CoverSettings {
     size: u16,
     quality: u8,
     interpolation: InterpolationType,
-    aspect_ratio: AspectRatio
+    aspect_ratio: AspectRatio,
 }
 
 impl Default for CoverSettings {
@@ -39,12 +41,13 @@ impl Default for CoverSettings {
             aspect_ratio: AspectRatio::default(),
             interpolation: InterpolationType::default(),
             quality: 80,
-            size: 64
+            size: 64,
         }
     }
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct AudioAnalyzerSettings {
     fft_enabled: bool,
     fft_size: u64,
@@ -54,12 +57,13 @@ impl Default for AudioAnalyzerSettings {
     fn default() -> Self {
         Self {
             fft_enabled: true,
-            fft_size: 2048
+            fft_size: 2048,
         }
     }
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct WaveformSettings {
     length: u16,
     height: u16,
@@ -96,7 +100,8 @@ impl Default for WaveformSettings {
     }
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct ThumbnailsSettings {
     waveform_on_fail: bool,
     thumbnail_format: String,
@@ -113,22 +118,21 @@ impl Default for ThumbnailsSettings {
     }
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct DebugSettings {
     enabled: bool,
-    log_file: Option<PathBuf>
+    log_file: Option<PathBuf>,
 }
 
 impl Default for DebugSettings {
     fn default() -> Self {
         Self {
             enabled: false,
-            log_file: None
+            log_file: None,
         }
     }
 }
 
 pub mod parsers;
 pub use args::*;
-pub use file::*;
-use serde_derive::Deserialize;
