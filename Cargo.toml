@@ -7,11 +7,20 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
+dirs = { version = "5.0.1", optional = true }
 hex_color = "3.0.0"
 image = "0.25.1"
 plotters = "0.3.5"
+serde = "1.0.204"
+serde_derive = { version = "1.0.204", optional = true }
 symphonia = { version = "0.5.4", features = ["all"] }
 symphonia-core = "0.5.4"
+thiserror = "1.0.62"
+toml = { version = "0.8.14", optional = true }
+
+[features]
+default = ["config_file"]
+config_file = ["toml","serde_derive","dirs"]
 
 [profile.release]
 codegen-units = 1
