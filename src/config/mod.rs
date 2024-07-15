@@ -1,24 +1,39 @@
 mod args;
+mod enums;
 mod file;
 
-use parsers::{aspect_ratio::AspectRatio, interpol::InterpolationType};
+pub use args::*;
+pub use enums::*;
+
 use std::path::PathBuf;
 
 #[derive(Debug)]
 #[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct Config {
-    cover_settings: Option<CoverSettings>,
-    audio_analyzer_settings: Option<AudioAnalyzerSettings>,
-    waveform_settings: Option<WaveformSettings>,
-    thumbnail_settings: Option<ThumbnailsSettings>,
-    debug: Option<DebugSettings>,
+    pub cover_settings: Option<CoverSettings>,
+
+    #[cfg(feature = "colored_waveform")]
+    pub audio_analyzer_settings: Option<AudioAnalyzerSettings>,
+
+    #[cfg(feature = "3d_wavetables")]
+    pub wavetable_settings: Option<WavetableSettings>,
+
+    pub waveform_settings: Option<WaveformSettings>,
+    pub thumbnail_settings: Option<ThumbnailsSettings>,
+    pub debug: Option<DebugSettings>,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
             cover_settings: Some(CoverSettings::default()),
+
+            #[cfg(feature = "colored_waveform")]
             audio_analyzer_settings: Some(AudioAnalyzerSettings::default()),
+
+            #[cfg(feature = "3d_wavetables")]
+            wavetable_settings: Some(WavetableSettings::default()),
+
             thumbnail_settings: Some(ThumbnailsSettings::default()),
             waveform_settings: Some(WaveformSettings::default()),
             debug: Some(DebugSettings::default()),
@@ -26,33 +41,38 @@ impl Default for Config {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct CoverSettings {
-    size: u16,
-    quality: u8,
-    interpolation: InterpolationType,
-    aspect_ratio: AspectRatio,
+    pub no_cover: bool,
+    pub size: u32,
+    pub interpolation: InterpolationType,
+    pub aspect_ratio: AspectRatio,
 }
 
 impl Default for CoverSettings {
     fn default() -> Self {
         Self {
+            no_cover: false,
             aspect_ratio: AspectRatio::default(),
             interpolation: InterpolationType::default(),
-            quality: 80,
             size: 64,
         }
     }
 }
 
-#[derive(Debug)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
+#[derive(Debug, Clone)]
+#[cfg(feature = "3d_wavetables")]
+#[cfg_attr(
+    all(feature = "config_file", feature = "colored_waveform"),
+    derive(serde_derive::Deserialize)
+)]
 pub struct AudioAnalyzerSettings {
-    fft_enabled: bool,
-    fft_size: u64,
+    pub fft_enabled: bool,
+    pub fft_size: u64,
 }
 
+#[cfg(feature = "3d_wavetables")]
 impl Default for AudioAnalyzerSettings {
     fn default() -> Self {
         Self {
@@ -62,22 +82,49 @@ impl Default for AudioAnalyzerSettings {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[cfg(feature = "3d_wavetables")]
+#[cfg_attr(
+    all(feature = "config_file", feature = "3d_wavetables"),
+    derive(serde_derive::Deserialize)
+)]
+pub struct WavetableSettings {
+    horizontal_rotation: f32,
+    vertical_rotation: f32,
+    width: f32,
+    height: f32,
+    y_offset: f32,
+}
+
+#[cfg(feature = "3d_wavetables")]
+impl Default for WavetableSettings {
+    fn default() -> Self {
+        Self {
+            horizontal_rotation: -0.24,
+            vertical_rotation: 1.22,
+            width: 0.72,
+            height: 0.1,
+            y_offset: 0.05,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct WaveformSettings {
-    length: u16,
-    height: u16,
-    sample_style: String,
-    sample_smoothing: f32,
-    fill_type: String,
-    fill_colors: Option<Vec<String>>,
-    fill_color: Option<String>,
-    fill_texture: Option<PathBuf>,
-    stroke_type: String,
-    stroke_texture: Option<String>,
-    stroke_color: Option<String>,
-    stroke_colors: Option<String>,
-    stroke_width: Option<u8>,
+    pub length: u32,
+    pub height: u32,
+    // pub sample_style: String,
+    // pub sample_smoothing: f32,
+    // pub fill_type: String,
+    // pub fill_colors: Option<Vec<String>>,
+    pub fill_color: Option<String>,
+    // pub fill_texture: Option<PathBuf>,
+    // pub stroke_type: String,
+    // pub stroke_texture: Option<String>,
+    // pub stroke_color: Option<String>,
+    // pub stroke_colors: Option<String>,
+    // pub stroke_width: Option<u8>,
 }
 
 impl Default for WaveformSettings {
@@ -85,54 +132,40 @@ impl Default for WaveformSettings {
         Self {
             length: 200,
             height: 80,
-            sample_style: "bars".to_string(),
-            sample_smoothing: 1.0,
-            fill_type: "solid".to_string(),
-            fill_colors: None,
+            // sample_style: "bars".to_string(),
+            // sample_smoothing: 1.0,
+            // fill_type: "solid".to_string(),
+            // fill_colors: None,
             fill_color: None,
-            fill_texture: None,
-            stroke_type: "solid".to_string(),
-            stroke_texture: None,
-            stroke_color: None,
-            stroke_colors: None,
-            stroke_width: None,
+            // fill_texture: None,
+            // stroke_type: "solid".to_string(),
+            // stroke_texture: None,
+            // stroke_color: None,
+            // stroke_colors: None,
+            // stroke_width: None,
         }
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct ThumbnailsSettings {
-    waveform_on_fail: bool,
-    thumbnail_format: String,
-    overlay: String,
+    pub waveform_on_fail: bool,
+    pub overlay: String,
 }
 
 impl Default for ThumbnailsSettings {
     fn default() -> Self {
         Self {
             waveform_on_fail: true,
-            thumbnail_format: "jpeg".to_string(),
             overlay: "none".to_string(),
         }
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone)]
 #[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct DebugSettings {
-    enabled: bool,
-    log_file: Option<PathBuf>,
+    pub enabled: bool,
+    pub log_file: Option<PathBuf>,
 }
-
-impl Default for DebugSettings {
-    fn default() -> Self {
-        Self {
-            enabled: false,
-            log_file: None,
-        }
-    }
-}
-
-pub mod parsers;
-pub use args::*;

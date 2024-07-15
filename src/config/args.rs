@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -5,9 +7,26 @@ use clap::Parser;
 pub struct Args {
     ///input file name
     #[arg(short, long)]
-    pub input: String,
+    #[cfg(feature = "config_file")]
+    pub input: Option<PathBuf>,
+
+    ///input file name
+    #[arg(short, long)]
+    #[cfg(not(feature = "config_file"))]
+    pub input: PathBuf,
 
     ///output file name of the generated thumbnail
     #[arg(short, long)]
-    pub output: String,
+    #[cfg(feature = "config_file")]
+    pub output: Option<PathBuf>,
+
+    ///output file name of the generated thumbnail
+    #[arg(short, long)]
+    #[cfg(not(feature = "config_file"))]
+    pub output: PathBuf,
+
+    /// creates a config directory with an example config file
+    #[arg(long, action)]
+    #[cfg(feature = "config_file")]
+    pub init_config: bool,
 }

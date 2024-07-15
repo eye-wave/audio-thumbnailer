@@ -17,8 +17,13 @@ lint:
 	cargo clippy
 
 test:
-	rm test/**/*.jpg -f
-	mkdir -p test/thumb
+	rm -rf test/generated/*
+	mkdir -p test/generated
+
+	find test -not -path '*generated*' -type f | \
+	while read input; do \
+		cargo run -- --input "$$input" --output "test/generated/$$(basename "$$input").jpg"; \
+	done
 
 	cargo test
 

@@ -1,7 +1,12 @@
 use plotters::prelude::*;
 use std::path::Path;
 
-pub fn draw_waveform(samples: &[f32], out_path: &Path, size: &(u32, u32), color: &RGBAColor) {
+pub fn draw_waveform<P: AsRef<Path>>(
+    samples: &[u8],
+    out_path: &P,
+    size: &(u32, u32),
+    color: &RGBAColor,
+) {
     if samples.is_empty() {
         panic!("samples cannot be empty");
     }
@@ -15,7 +20,7 @@ pub fn draw_waveform(samples: &[f32], out_path: &Path, size: &(u32, u32), color:
     }
 
     let range_x = 0.0..(samples.len() / quality) as f64;
-    let range_y = -1.0..1.0;
+    let range_y = u8::MIN as f64..u8::MAX as f64;
 
     let mut chart = ChartBuilder::on(&root)
         .build_cartesian_2d(range_x, range_y)

@@ -2,14 +2,19 @@
 
 This is a fast and lightweight audio file thumbnailer written in Rust. It generates thumbnails for audio files that can be used by file managers.
 
-## Features
+## Overview
 
 - **Fast and Lightweight**: Thanks to rust programming language.
 - **Customizable**: You can specify precisely how you want your thumbnail to look, by customizing ~~quality~~ , aspect ratio treatment, interpolation algorithm, waveform color, and waveform size.
-- **Multipurpose**: It can generate album covers for audio files. Without embedded cover art it generates waveforms to represent the audio content visually. 
+- **Multipurpose**: It can generate album covers for audio files. Without embedded cover art it generates waveforms to represent the audio content visually.
+- **Modular**: You can out-out of features you don't
 
-
-## Usage
+## Features
+| feature_name | description | additional info |
+|-|-|-|
+| config_file | adds a option to customize the behavior of the app with a single config file | run the app with `--init-config` flag to create a example config file |
+| colored_waveform | adds a fft algorithm to the waveform generation to color them based on frequency |
+| 3d_wavetables | checks for .wav files if they are a wavetable file. if they are, generates a 3d view of them | useful when dealing with samples for synthesizers like [serum](https://xferrecords.com/products/serum) or [vital](https://vital.audio)
 
 ### Installation
 
@@ -26,7 +31,7 @@ cd audio-thumbnailer
 make install
 ```
 
-### Command Line Options
+### Usage
 
 The thumbnailer supports the following command line options:
 
@@ -34,20 +39,23 @@ The thumbnailer supports the following command line options:
 audio-thumbnailer [OPTIONS] --input <input> --output <output>
 ```
 
-- `--input <input>`: Specifies the input audio file.
-- `--output <output>`: Specifies the output file name for the generated thumbnail.
-~~- `--quality <quality>`: Specifies the quality of the generated image (0 = worst, 10 = lossless).~~
-- `--aspect_ratio <aspect_ratio>`: Specifies how to treat aspect ratio ("crop", "stretch", "auto").
-- `--size <size>`: Specifies the thumbnail size.
-- `--color <color>`: Specifies the waveform color.
-- `--interpol <interpol>`: Specifies the interpolation algorithm to use ("lanczos3", "gaussian", "nearest", "triangle").
-- `--waveform_size <waveform_size>`: Specifies the waveform width and height.
-
-### Example
-
+#### Example
 ```bash
 audio-thumbnailer -i input.mp3 -o thumbnail.png
 ```
+#### Command line arguments
+- `--input <input>`: Specifies the input audio file.
+- `--output <output>`: Specifies the output file name for the generated thumbnail.
+
+### Supported formats
+| mime type | extension | waveform | cover |
+|-|-|-|-|
+|`audio/mpeg`|.mp3|✅|✅
+|`audio/wav`|.wav|✅|❌
+|`audio/ogg`|.ogg|✅|❌
+|`audio/flac`|.flac|✅|❌
+|`audio/ogg`|.opus|❌|❌
+|`audio/x-wavpack`|.wv|❌|❌
 
 ## Contributing
 

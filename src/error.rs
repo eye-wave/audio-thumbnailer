@@ -4,6 +4,16 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error(transparent)]
     Io(#[from] std::io::Error),
+
+    #[error(transparent)]
+    Symphonia(#[from] symphonia::core::errors::Error),
+
+    #[error(transparent)]
+    Img(#[from] image::error::ImageError),
+
+    #[error(transparent)]
+    Color(#[from] csscolorparser::ParseColorError),
+
     #[error("{0}")]
     Custom(String),
 

@@ -7,10 +7,12 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
+csscolorparser = { version = "0.6.2", features = ["rgb","named-colors"] }
 dirs = { version = "5.0.1", optional = true }
 hex_color = "3.0.0"
 image = "0.25.1"
 plotters = "0.3.5"
+rustfft = { version = "6.2.0", optional = true }
 serde = "1.0.204"
 serde_derive = { version = "1.0.204", optional = true }
 symphonia = { version = "0.5.4", features = ["all"] }
@@ -21,6 +23,8 @@ toml = { version = "0.8.14", optional = true }
 [features]
 default = []
 config_file = ["toml","serde_derive","dirs"]
+colored_waveform = ["rustfft"]
+3d_wavetables = []
 
 [profile.release]
 codegen-units = 1
@@ -29,6 +33,3 @@ incremental = false
 lto = true
 opt-level = 3
 panic = "abort"
-
-[dev-dependencies]
-rstest = "0.19.0"
