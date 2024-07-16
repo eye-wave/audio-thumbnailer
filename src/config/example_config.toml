@@ -2,7 +2,7 @@
 no_cover = false
 
 # size of the generated cover art
-# example: 64x64
+# for example size of 64 will generate as 64x64 cover
 # when using aspect_ratio auto, size will be used as a smaller side of the rectangle
 size = 64
 

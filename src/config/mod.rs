@@ -7,9 +7,9 @@ pub use enums::*;
 
 use std::path::PathBuf;
 
-#[derive(Debug)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
-pub struct Config {
+#[cfg(feature = "config_file")]
+#[derive(serde_derive::Deserialize)]
+pub struct ConfigDeserialize {
     pub cover_settings: Option<CoverSettings>,
 
     #[cfg(feature = "colored_waveform")]
@@ -23,22 +23,19 @@ pub struct Config {
     pub debug: Option<DebugSettings>,
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            cover_settings: Some(CoverSettings::default()),
+#[derive(Debug, Default)]
+pub struct Config {
+    pub cover_settings: CoverSettings,
 
-            #[cfg(feature = "colored_waveform")]
-            audio_analyzer_settings: Some(AudioAnalyzerSettings::default()),
+    #[cfg(feature = "colored_waveform")]
+    pub audio_analyzer_settings: AudioAnalyzerSettings,
 
-            #[cfg(feature = "3d_wavetables")]
-            wavetable_settings: Some(WavetableSettings::default()),
+    #[cfg(feature = "3d_wavetables")]
+    pub wavetable_settings: WavetableSettings,
 
-            thumbnail_settings: Some(ThumbnailsSettings::default()),
-            waveform_settings: Some(WaveformSettings::default()),
-            debug: Some(DebugSettings::default()),
-        }
-    }
+    pub waveform_settings: WaveformSettings,
+    pub thumbnail_settings: ThumbnailsSettings,
+    pub debug: DebugSettings,
 }
 
 #[derive(Debug, Clone)]

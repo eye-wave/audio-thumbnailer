@@ -8,6 +8,9 @@ use clap::Parser;
 use config::{Args, Config};
 use image::{cover_art::load_and_resize, parse_color, waveform::draw_waveform, write_image};
 
+#[cfg(feature = "config_file")]
+use config::ConfigDeserialize;
+
 pub use error::{Error, Result};
 
 fn main() -> Result<()> {
@@ -15,18 +18,17 @@ fn main() -> Result<()> {
     let mut config = Config::default();
     let args = Args::parse();
 
-    let debug_options = config.debug.unwrap_or_default();
-    if debug_options.enabled {
-        println!("Logging into {:?}", debug_options.log_file);
+    if config.debug.enabled {
+        println!("Logging into {:?}", config.debug.log_file);
     }
 
-    let input = args.input;
-    let output = args.output;
+    let input = args.input.clone();
+    let output = args.output.clone();
 
     #[cfg(feature = "config_file")]
     {
         if args.init_config {
-            Config::create_file()?;
+            ConfigDeserialize::create_file()?;
             return Ok(());
         }
 
@@ -42,7 +44,7 @@ For more information, try '--help'.";
             return Ok(());
         }
 
-        match Config::load() {
+        match ConfigDeserialize::load() {
             Ok(conf) => config = conf,
             Err(err) => {
                 println!("{}", err);
@@ -61,22 +63,22 @@ For more information, try '--help'.";
         )));
     }
 
+    args.apply_to_config(&mut config);
+
     let mut audio_decoder = AudioDecoder::new();
     let mut probe = audio_decoder
         .create_probe(&input)
         .expect("Failed to create audio decoder");
 
-    let thumbnail_settings = config.thumbnail_settings.unwrap_or_default();
-    let cover_settings = config.cover_settings.unwrap_or_default();
-    if !cover_settings.no_cover {
+    if !config.cover_settings.no_cover {
         if let Some(image_data) = audio_decoder.get_cover_art(&mut probe) {
-            match load_and_resize(&image_data, &cover_settings) {
+            match load_and_resize(&image_data, &config.cover_settings) {
                 Ok(image) => {
                     write_image(image, &output)?;
                     return Ok(());
                 }
                 Err(err) => {
-                    if !thumbnail_settings.waveform_on_fail {
+                    if !config.thumbnail_settings.waveform_on_fail {
                         return Err(err);
                     }
                 }
@@ -84,12 +86,14 @@ For more information, try '--help'.";
         }
     }
 
-    let waveform_settings = config.waveform_settings.unwrap_or_default();
     if let Some(samples) = audio_decoder.decode_audio(&mut probe) {
-        let w = waveform_settings.length;
-        let h = waveform_settings.height;
+        let w = config.waveform_settings.length;
+        let h = config.waveform_settings.height;
 
-        let color = waveform_settings.fill_color.unwrap_or("red".to_owned());
+        let color = config
+            .waveform_settings
+            .fill_color
+            .unwrap_or("red".to_owned());
         let color = parse_color(&color)?;
 
         draw_waveform(&samples, &output, &(w, h), &color);

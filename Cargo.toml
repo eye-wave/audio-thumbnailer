@@ -1,6 +1,6 @@
 [package]
 name = "audio-thumbnailer"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -20,15 +20,16 @@ thiserror = "1.0.62"
 toml = { version = "0.8.14", optional = true }
 
 [features]
-default = ["config_file"]
+default = []
 config_file = ["toml","dirs"]
 colored_waveform = ["rustfft"]
 3d_wavetables = []
 
 [profile.release]
 codegen-units = 1
+opt-level = "z"
 debug = false
 incremental = false
 lto = true
-opt-level = 3
 panic = "abort"
+strip = true

@@ -1,7 +1,8 @@
+use clap::ValueEnum;
 use image::imageops::FilterType;
 use serde_derive::Deserialize;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, ValueEnum)]
 pub enum InterpolationType {
     Lanczos3,
     CatmullRom,
@@ -28,7 +29,7 @@ impl InterpolationType {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, ValueEnum)]
 pub enum AspectRatio {
     Auto,
     Crop,
