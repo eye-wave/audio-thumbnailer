@@ -2,7 +2,7 @@
 .PHONY: install uninstall format lint test clean
 
 install:
-	cargo build --release
+	cargo build --all-features --release
 	sudo cp target/release/audio-thumbnailer /usr/bin/
 	sudo cp audio.thumbnailer /usr/share/thumbnailers
 

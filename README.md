@@ -48,7 +48,7 @@ audio-thumbnailer -i input.mp3 -o thumbnail.png
 - `--output <output>`: Specifies the output file name for the generated thumbnail.
 
 ### Supported formats
-| mime type | extension | waveform | cover |
+| mime type | extension | waveform | cover art |
 |-|-|-|-|
 |`audio/mpeg`|`.m2a` `.m3a` `.mp2` `.mp2a` `.mp3` `.mpga`|✅|✅
 |`audio/wav`|`.wav`|✅|❌

@@ -1,11 +1,42 @@
-use crate::{Error, Result};
+use crate::{config::Config, decode::VisualData, Error, Result};
+use cover_art::load_and_resize;
 use csscolorparser::Color;
 use image::{DynamicImage, ImageFormat};
 use plotters::style::RGBAColor;
 use std::path::Path;
+use waveform::draw_waveform;
 
 pub mod cover_art;
 pub mod waveform;
+
+impl VisualData {
+    pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> Result<()> {
+        match self {
+            Self::AudioData(samples) => {
+                let w = config.waveform_settings.length;
+                let h = config.waveform_settings.height;
+
+                let color = config
+                    .waveform_settings
+                    .fill_color
+                    .clone()
+                    .unwrap_or("red".to_string());
+
+                let color = parse_color(&color)?;
+
+                draw_waveform(samples, &path, &(w, h), &color);
+
+                Ok(())
+            }
+            Self::ImageData(image_data) => {
+                let image = load_and_resize(image_data, &config.cover_settings)?;
+                write_image(image, &path)?;
+
+                Ok(())
+            }
+        }
+    }
+}
 
 pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> Result<()> {
     let format =

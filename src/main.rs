@@ -1,12 +1,11 @@
-mod audio;
 mod config;
+mod decode;
 mod error;
 mod image;
 
-use audio::AudioDecoder;
 use clap::Parser;
 use config::{Args, Config};
-use image::{cover_art::load_and_resize, parse_color, waveform::draw_waveform, write_image};
+use decode::decode_visual_data;
 
 #[cfg(feature = "config_file")]
 use config::ConfigDeserialize;
@@ -65,41 +64,7 @@ For more information, try '--help'.";
 
     args.apply_to_config(&mut config);
 
-    let mut audio_decoder = AudioDecoder::new();
-    let mut probe = audio_decoder
-        .create_probe(&input)
-        .expect("Failed to create audio decoder");
-
-    if !config.cover_settings.no_cover {
-        if let Some(image_data) = audio_decoder.get_cover_art(&mut probe) {
-            match load_and_resize(&image_data, &config.cover_settings) {
-                Ok(image) => {
-                    write_image(image, &output)?;
-                    return Ok(());
-                }
-                Err(err) => {
-                    if !config.thumbnail_settings.waveform_on_fail {
-                        return Err(err);
-                    }
-                }
-            }
-        }
-    }
-
-    if let Some(samples) = audio_decoder.decode_audio(&mut probe) {
-        let w = config.waveform_settings.length;
-        let h = config.waveform_settings.height;
-
-        let color = config
-            .waveform_settings
-            .fill_color
-            .unwrap_or("red".to_owned());
-        let color = parse_color(&color)?;
-
-        draw_waveform(&samples, &output, &(w, h), &color);
-
-        return Ok(());
-    }
+    decode_visual_data(&input, &config)?.draw_and_save(&output, &config)?;
 
     Ok(())
 }
