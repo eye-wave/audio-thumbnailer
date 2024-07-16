@@ -7,7 +7,7 @@ This is a fast and lightweight audio file thumbnailer written in Rust. It genera
 - **Fast and Lightweight**: Thanks to rust programming language.
 - **Customizable**: You can specify precisely how you want your thumbnail to look, by customizing ~~quality~~ , aspect ratio treatment, interpolation algorithm, waveform color, and waveform size.
 - **Multipurpose**: It can generate album covers for audio files. Without embedded cover art it generates waveforms to represent the audio content visually.
-- **Modular**: You can out-out of features you don't
+- **Modular**: You can out-out of features you don't need
 
 ## Features
 | feature_name | description | additional info |
