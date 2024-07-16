@@ -4,9 +4,8 @@ use image::{DynamicImage, GenericImageView};
 
 pub fn load_and_resize(buffer: &[u8], options: &CoverSettings) -> Result<DynamicImage> {
     let size = options.size;
-    let interpolation = options.interpolation;
-    let aspect_ratio = options.aspect_ratio;
-    let filter = interpolation.to_filter_type();
+    let aspect_ratio = &options.aspect_ratio;
+    let filter = options.interpolation.to_filter_type();
 
     let picture = image::load_from_memory(buffer)?;
     match aspect_ratio {

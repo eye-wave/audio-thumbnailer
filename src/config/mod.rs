@@ -151,14 +151,14 @@ impl Default for WaveformSettings {
 #[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct ThumbnailsSettings {
     pub waveform_on_fail: bool,
-    pub overlay: String,
+    // pub overlay: String,
 }
 
 impl Default for ThumbnailsSettings {
     fn default() -> Self {
         Self {
             waveform_on_fail: true,
-            overlay: "none".to_string(),
+            // overlay: "none".to_string(),
         }
     }
 }

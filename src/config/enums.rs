@@ -1,7 +1,7 @@
 use image::imageops::FilterType;
+use serde_derive::Deserialize;
 
-#[derive(Debug, Clone, Copy)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
+#[derive(Debug, Clone, Deserialize)]
 pub enum InterpolationType {
     Lanczos3,
     CatmullRom,
@@ -17,7 +17,7 @@ impl Default for InterpolationType {
 }
 
 impl InterpolationType {
-    pub fn to_filter_type(self) -> FilterType {
+    pub fn to_filter_type(&self) -> FilterType {
         match self {
             Self::CatmullRom => FilterType::CatmullRom,
             Self::Gaussian => FilterType::Gaussian,
@@ -28,8 +28,7 @@ impl InterpolationType {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
+#[derive(Debug, Clone, Deserialize)]
 pub enum AspectRatio {
     Auto,
     Crop,
