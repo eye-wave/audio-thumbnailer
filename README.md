@@ -50,13 +50,14 @@ audio-thumbnailer -i input.mp3 -o thumbnail.png
 ### Supported formats
 | mime type | extension | waveform | cover art |
 |-|-|-|-|
-|`audio/mpeg`|`.m2a` `.m3a` `.mp2` `.mp2a` `.mp3` `.mpga`|✅|✅
-|`audio/wav`|`.wav`|✅|❌
-|`audio/ogg`|`.oga` `.ogg` `.spx`|✅|❌
-|`audio/flac`|`.flac`|✅|❌
+|`audio/aac`|`.aac`|✅|❌
 |`audio/aiff`|`.aiff` `.aif` `.aff`|✅|❌
-|`audio/opus`|`.opus`|❌|❌
+|`audio/flac`|`.flac`|✅|❌
+|`audio/mpeg`|`.m2a` `.m3a` `.mp2` `.mp2a` `.mp3` `.mpga`|✅|✅
+|`audio/ogg`|`.oga` `.ogg` `.spx`|✅|❌
+|`audio/wav`|`.wav`|✅|❌
 |`audio/x-wavpack`|`.wv`|❌|❌
+|`audio/opus`|`.opus`|❌|❌
 |`audio/midi`|`.kar` `.mid` `.midi` `.rmi`|❌|-
 |`audio/x-mpegurl`|`.m3u`|-|❌
 
