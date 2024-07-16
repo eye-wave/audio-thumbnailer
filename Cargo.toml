@@ -1,6 +1,6 @@
 [package]
 name = "audio-thumbnailer"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -27,7 +27,7 @@ colored_waveform = ["rustfft"]
 
 [profile.release]
 codegen-units = 1
-opt-level = "z"
+opt-level = 3
 debug = false
 incremental = false
 lto = true

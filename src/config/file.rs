@@ -23,7 +23,6 @@ pub mod config_file {
                 return Ok(Config {
                     cover_settings: config.cover_settings.unwrap_or_default(),
                     waveform_settings: config.waveform_settings.unwrap_or_default(),
-                    thumbnail_settings: config.thumbnail_settings.unwrap_or_default(),
                     debug: config.debug.unwrap_or_default(),
 
                     #[cfg(feature = "colored_waveform")]

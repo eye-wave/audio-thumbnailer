@@ -16,6 +16,18 @@ interpolation = "Triangle"
 # Crop - crops the original image, getting rid of the edges
 aspect_ratio = "Crop"
 
+# generate a waveform if getting a thumbnail fails
+waveform_on_fail = true
+
+# other thumbnailers use some form of overlay on top of the cover
+# to make it destinguishable from the other file formats
+# therefore, possible options are:
+# "cd", "none"
+overlay = "none"
+
+# image format used for thumbnails
+image_format = "Jpeg"
+
 # disabled by default
 # can be enabled by building with "colored_waveform" feature
 [audio_analyzer_settings]
@@ -39,16 +51,6 @@ fill_color = "#7ad64d"
 # stroke_color = None
 # stroke_colors = None
 # stroke_width = None
-
-[thumbnail_settings]
-# generate a waveform if getting a thumbnail fails
-waveform_on_fail = true
-
-# other thumbnailers use some form of overlay on top of the cover
-# to make it destinguishable from the other file formats
-# therefore, possible options are:
-# "cd", "none"
-overlay = "none"
 
 # disabled by default
 # can be enabled by building with "3d_wavetables" feature

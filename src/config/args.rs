@@ -93,7 +93,7 @@ impl Args {
             .clone_from(&self.waveform_fill_color);
 
         if let Some(v) = self.waveform_on_fail {
-            config.thumbnail_settings.waveform_on_fail = v
+            config.cover_settings.waveform_on_fail = v
         }
     }
 }

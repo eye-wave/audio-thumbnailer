@@ -19,7 +19,6 @@ pub struct ConfigDeserialize {
     pub wavetable_settings: Option<WavetableSettings>,
 
     pub waveform_settings: Option<WaveformSettings>,
-    pub thumbnail_settings: Option<ThumbnailsSettings>,
     pub debug: Option<DebugSettings>,
 }
 
@@ -34,7 +33,6 @@ pub struct Config {
     pub wavetable_settings: WavetableSettings,
 
     pub waveform_settings: WaveformSettings,
-    pub thumbnail_settings: ThumbnailsSettings,
     pub debug: DebugSettings,
 }
 
@@ -45,6 +43,9 @@ pub struct CoverSettings {
     pub size: u32,
     pub interpolation: InterpolationType,
     pub aspect_ratio: AspectRatio,
+    pub waveform_on_fail: bool,
+    pub image_format: ImageFormat,
+    // pub overlay: String,
 }
 
 impl Default for CoverSettings {
@@ -53,6 +54,8 @@ impl Default for CoverSettings {
             no_cover: false,
             aspect_ratio: AspectRatio::default(),
             interpolation: InterpolationType::default(),
+            waveform_on_fail: true,
+            image_format: ImageFormat::Jpeg,
             size: 64,
         }
     }
@@ -140,22 +143,6 @@ impl Default for WaveformSettings {
             // stroke_color: None,
             // stroke_colors: None,
             // stroke_width: None,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
-pub struct ThumbnailsSettings {
-    pub waveform_on_fail: bool,
-    // pub overlay: String,
-}
-
-impl Default for ThumbnailsSettings {
-    fn default() -> Self {
-        Self {
-            waveform_on_fail: true,
-            // overlay: "none".to_string(),
         }
     }
 }

@@ -2,7 +2,7 @@
 .PHONY: install uninstall format lint test clean
 
 install:
-	cargo build --all-features --release
+	cargo build --release
 	sudo cp target/release/audio-thumbnailer /usr/bin/
 	sudo cp audio.thumbnailer /usr/share/thumbnailers
 
@@ -22,8 +22,11 @@ test:
 
 	find test -not -path '*generated*' -type f | \
 	while read input; do \
-		cargo run -- --input "$$input" --output "test/generated/$$(basename "$$input").jpg"; \
+		cargo run -- -i "$$input" -o "test/generated/$$(basename "$$input").jpg"; \
 	done
+
+	cargo run -- -i test/1_fish.mp3 -o test/generated/thumbnail
+	mv test/generated/thumbnail test/generated/thumbnail.jpg
 
 	cargo test
 

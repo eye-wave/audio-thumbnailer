@@ -1,4 +1,4 @@
-use crate::{config::Config, decode::VisualData, Error, Result};
+use crate::{config::Config, decode::VisualData, Result};
 use cover_art::load_and_resize;
 use csscolorparser::Color;
 use image::{DynamicImage, ImageFormat};
@@ -30,7 +30,7 @@ impl VisualData {
             }
             Self::Pixels(image_data) => {
                 let image = load_and_resize(image_data, &config.cover_settings)?;
-                write_image(image, &path)?;
+                write_image(image, &path, &config)?;
 
                 Ok(())
             }
@@ -38,21 +38,20 @@ impl VisualData {
     }
 }
 
-pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> Result<()> {
+pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P, config: &Config) -> Result<()> {
     let format =
         path.as_ref()
             .extension()
-            .and_then(|extension| match extension.to_str().unwrap() {
+            .and_then(|ext| ext.to_str())
+            .and_then(|ext| match ext {
                 "jpg" => Some(ImageFormat::Jpeg),
                 "jpeg" => Some(ImageFormat::Jpeg),
                 "png" => Some(ImageFormat::Png),
-                _ => None,
-            });
+                _ => None
+            })
+            .unwrap_or(config.cover_settings.image_format.to_image_enum());
 
-    match format {
-        Some(format) => Ok(image.save_with_format(path, format)?),
-        _ => Err(Error::Custom("Invalid image format")),
-    }
+    Ok(image.save_with_format(path, format)?)
 }
 
 pub fn parse_color(color: &str) -> Result<RGBAColor> {

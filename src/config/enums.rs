@@ -41,3 +41,20 @@ impl Default for AspectRatio {
         Self::Crop
     }
 }
+
+#[derive(Debug, Clone, Deserialize, ValueEnum)]
+pub enum ImageFormat {
+    Jpeg,
+    Png,
+    Webp
+}
+
+impl ImageFormat {
+    pub fn to_image_enum(&self) -> image::ImageFormat {
+        match self {
+            Self::Jpeg => image::ImageFormat::Jpeg,
+            Self::Png => image::ImageFormat::Png,
+            Self::Webp => image::ImageFormat::WebP,
+        }
+    }
+}
