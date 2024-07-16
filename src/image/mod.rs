@@ -12,7 +12,7 @@ pub mod waveform;
 impl VisualData {
     pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> Result<()> {
         match self {
-            Self::AudioData(samples) => {
+            Self::Samples(samples) => {
                 let w = config.waveform_settings.length;
                 let h = config.waveform_settings.height;
 
@@ -28,7 +28,7 @@ impl VisualData {
 
                 Ok(())
             }
-            Self::ImageData(image_data) => {
+            Self::Pixels(image_data) => {
                 let image = load_and_resize(image_data, &config.cover_settings)?;
                 write_image(image, &path)?;
 
@@ -51,7 +51,7 @@ pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> Result<()> 
 
     match format {
         Some(format) => Ok(image.save_with_format(path, format)?),
-        _ => Err(Error::Custom("Invalid image format".to_string())),
+        _ => Err(Error::Custom("Invalid image format")),
     }
 }
 

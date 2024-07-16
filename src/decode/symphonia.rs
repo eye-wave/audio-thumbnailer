@@ -24,7 +24,6 @@ pub fn create_probe<P: AsRef<Path>>(path: &P) -> Result<ProbeResult> {
         &MetadataOptions::default(),
     )?;
 
-    // self.current_file = Some(path.as_ref().display().to_string());
     Ok(probe_result)
 }
 
@@ -41,14 +40,6 @@ pub fn get_cover_art(probe: &mut ProbeResult) -> Option<Vec<u8>> {
 }
 
 pub fn decode_audio(probe: &mut ProbeResult) -> Option<Vec<u8>> {
-    // if let Some(current) = &self.current_file {
-    //     match current {
-    //         s if s.ends_with(".opus") => unimplemented!(),
-    //         s if s.ends_with(".wv") => unimplemented!(),
-    //         _ => {}
-    //     };
-    // }
-
     let track = probe.format.default_track().unwrap();
 
     let codec_registry = get_codecs();
@@ -70,6 +61,5 @@ pub fn decode_audio(probe: &mut ProbeResult) -> Option<Vec<u8>> {
         }
     }
 
-    // self.current_file = None;
     Some(samples)
 }

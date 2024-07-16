@@ -57,9 +57,7 @@ For more information, try '--help'.";
     let output = output.unwrap();
 
     if !input.exists() {
-        return Err(Error::Custom(format!(
-            "Couldn't find input file '{input:?}'"
-        )));
+        return Err(Error::Custom("Couldn't find input file"));
     }
 
     args.apply_to_config(&mut config);

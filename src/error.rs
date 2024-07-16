@@ -15,7 +15,7 @@ pub enum Error {
     Color(#[from] csscolorparser::ParseColorError),
 
     #[error("{0}")]
-    Custom(String),
+    Custom(&'static str),
 
     #[cfg(feature = "config_file")]
     #[error(transparent)]
