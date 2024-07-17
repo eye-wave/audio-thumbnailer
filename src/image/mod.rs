@@ -30,7 +30,7 @@ impl VisualData {
             }
             Self::Pixels(image_data) => {
                 let image = load_and_resize(image_data, &config.cover_settings)?;
-                write_image(image, &path, &config)?;
+                write_image(image, &path, config)?;
 
                 Ok(())
             }
@@ -39,17 +39,17 @@ impl VisualData {
 }
 
 pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P, config: &Config) -> Result<()> {
-    let format =
-        path.as_ref()
-            .extension()
-            .and_then(|ext| ext.to_str())
-            .and_then(|ext| match ext {
-                "jpg" => Some(ImageFormat::Jpeg),
-                "jpeg" => Some(ImageFormat::Jpeg),
-                "png" => Some(ImageFormat::Png),
-                _ => None
-            })
-            .unwrap_or(config.cover_settings.image_format.to_image_enum());
+    let format = path
+        .as_ref()
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .and_then(|ext| match ext {
+            "jpg" => Some(ImageFormat::Jpeg),
+            "jpeg" => Some(ImageFormat::Jpeg),
+            "png" => Some(ImageFormat::Png),
+            _ => None,
+        })
+        .unwrap_or(config.cover_settings.image_format.to_image_enum());
 
     Ok(image.save_with_format(path, format)?)
 }

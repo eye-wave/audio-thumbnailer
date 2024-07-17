@@ -46,7 +46,7 @@ impl Default for AspectRatio {
 pub enum ImageFormat {
     Jpeg,
     Png,
-    Webp
+    Webp,
 }
 
 impl ImageFormat {
