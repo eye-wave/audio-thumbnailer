@@ -1,14 +1,16 @@
+use crate::config::Config;
 use anyhow::anyhow;
+use midi::{decode_midi, MidiTracks};
 use std::path::Path;
 use symphonia::{create_probe, decode_audio, get_cover_art};
 
-use crate::config::Config;
-
+pub mod midi;
 mod symphonia;
 
-#[derive(Debug)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub enum VisualData {
     Samples(Vec<u8>),
+    Midi(MidiTracks),
     Pixels(Vec<u8>),
 }
 
@@ -20,7 +22,8 @@ pub fn decode_visual_data<P: AsRef<Path>>(path: &P, config: &Config) -> anyhow::
                 unimplemented!()
             }
             "midi" | "mid" | "rmi" => {
-                unimplemented!()
+                let tracks = decode_midi(path)?;
+                Ok(VisualData::Midi(tracks))
             }
             "wv" => {
                 unimplemented!()

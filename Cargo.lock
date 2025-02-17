@@ -99,6 +99,7 @@ dependencies = [
  "clap",
  "csscolorparser",
  "image",
+ "midly",
  "rustfft",
  "serde",
  "serde_derive",
@@ -572,6 +573,15 @@ name = "memchr"
 version = "2.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c8640c5d730cb13ebd907d8d04b52f55ac9a2eec55b440c8892f40d56c76c1d"
+
+[[package]]
+name = "midly"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "207d755f4cb882d20c4da58d707ca9130a0c9bc5061f657a4f299b8e36362b7a"
+dependencies = [
+ "rayon",
+]
 
 [[package]]
 name = "minimal-lexical"

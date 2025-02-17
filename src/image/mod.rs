@@ -1,11 +1,13 @@
 use crate::{config::Config, decode::VisualData};
 use cover_art::load_and_resize;
 use image::{DynamicImage, ImageFormat, Rgb};
+use midi::draw_midi;
 use std::path::Path;
 use waveform::draw_waveform;
 
-pub mod cover_art;
-pub mod waveform;
+mod cover_art;
+mod midi;
+mod waveform;
 
 fn parse_color(color: &str) -> anyhow::Result<Rgb<u8>> {
     let parsed = csscolorparser::parse(color)?;
@@ -43,6 +45,28 @@ impl VisualData {
             Self::Pixels(image_data) => {
                 let image = load_and_resize(image_data, &config.cover_settings)?;
                 write_image(image, &path, config)?;
+
+                Ok(())
+            }
+            Self::Midi(midi) => {
+                let w = config.waveform_settings.length;
+                let h = config.waveform_settings.height;
+
+                let color = config
+                    .waveform_settings
+                    .fill_color
+                    .clone()
+                    .and_then(|c| parse_color(&c).ok())
+                    .unwrap_or(Rgb([0xff, 0, 0]));
+
+                let bg_color = config
+                    .waveform_settings
+                    .bg_color
+                    .clone()
+                    .and_then(|c| parse_color(&c).ok())
+                    .unwrap_or(Rgb([0; 3]));
+
+                draw_midi(midi, &path, (w, h), &color, &bg_color)?;
 
                 Ok(())
             }
