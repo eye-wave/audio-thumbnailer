@@ -1,27 +1,27 @@
 [package]
 name = "audio-thumbnailer"
-version = "0.2.3"
+version = "0.3.0"
 edition = "2021"
+license = "MIT"
+authors = ["_eyewave"]
+description = "Fast multipurpose thumbnailer for creating audio thumbnails on linux."
+repository = "https://github.com/eye-wave/audio-thumbnailer"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.5.4", features = ["derive"] }
-csscolorparser = { version = "0.6.2", features = ["rgb","named-colors"] }
-dirs = { version = "5.0.1", optional = true }
-image = "0.25.1"
-plotters = "0.3.5"
-rustfft = { version = "6.2.0", optional = true }
-serde = "1.0.204"
-serde_derive = { version = "1.0.204" }
-symphonia = { version = "0.5.4", features = ["all"] }
-symphonia-core = "0.5.4"
-thiserror = "1.0.62"
-toml = { version = "0.8.14", optional = true }
+anyhow = "^1.0.95"
+clap = { version = "^4.5.4", features = ["derive"] }
+csscolorparser = { version = "^0.6.2", features = ["rgb", "named-colors"] }
+image = "^0.25.1"
+rustfft = { version = "^6.2.0", optional = true }
+serde = "^1.0.204"
+serde_derive = { version = "^1.0.204" }
+symphonia = { version = "^0.5.4", features = ["all"] }
+symphonia-core = "^0.5.4"
 
 [features]
 default = []
-config_file = ["toml","dirs"]
 colored_waveform = ["rustfft"]
 3d_wavetables = []
 

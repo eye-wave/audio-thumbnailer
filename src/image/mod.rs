@@ -1,16 +1,22 @@
-use crate::{config::Config, decode::VisualData, Result};
+use crate::{config::Config, decode::VisualData};
 use cover_art::load_and_resize;
-use csscolorparser::Color;
-use image::{DynamicImage, ImageFormat};
-use plotters::style::RGBAColor;
+use image::{DynamicImage, ImageFormat, Rgb};
 use std::path::Path;
 use waveform::draw_waveform;
 
 pub mod cover_art;
 pub mod waveform;
 
+fn parse_color(color: &str) -> anyhow::Result<Rgb<u8>> {
+    let parsed = csscolorparser::parse(color)?;
+    let rgba = parsed.to_rgba8();
+    let rgb = Rgb([rgba[0], rgba[1], rgba[2]]);
+
+    Ok(rgb)
+}
+
 impl VisualData {
-    pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> Result<()> {
+    pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> anyhow::Result<()> {
         match self {
             Self::Samples(samples) => {
                 let w = config.waveform_settings.length;
@@ -20,11 +26,17 @@ impl VisualData {
                     .waveform_settings
                     .fill_color
                     .clone()
-                    .unwrap_or("red".to_string());
+                    .and_then(|c| parse_color(&c).ok())
+                    .unwrap_or(Rgb([0xff, 0, 0]));
 
-                let color = parse_color(&color)?;
+                let bg_color = config
+                    .waveform_settings
+                    .bg_color
+                    .clone()
+                    .and_then(|c| parse_color(&c).ok())
+                    .unwrap_or(Rgb([0; 3]));
 
-                draw_waveform(samples, &path, &(w, h), &color);
+                draw_waveform(samples, &path, (w, h), &color, &bg_color)?;
 
                 Ok(())
             }
@@ -38,7 +50,11 @@ impl VisualData {
     }
 }
 
-pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P, config: &Config) -> Result<()> {
+pub fn write_image<P: AsRef<Path>>(
+    image: DynamicImage,
+    path: &P,
+    config: &Config,
+) -> anyhow::Result<()> {
     let format = path
         .as_ref()
         .extension()
@@ -52,11 +68,4 @@ pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P, config: &Confi
         .unwrap_or(config.cover_settings.image_format.to_image_enum());
 
     Ok(image.save_with_format(path, format)?)
-}
-
-pub fn parse_color(color: &str) -> Result<RGBAColor> {
-    let [r, g, b, a] = color.parse::<Color>()?.to_rgba8();
-    let alpha = (a as f64) / (u8::MAX as f64);
-
-    Ok(RGBAColor(r, g, b, alpha))
 }

@@ -1,43 +1,47 @@
-use plotters::prelude::*;
+use anyhow::anyhow;
+use image::{ImageBuffer, Rgb};
 use std::path::Path;
 
 pub fn draw_waveform<P: AsRef<Path>>(
     samples: &[u8],
     out_path: &P,
-    size: &(u32, u32),
-    color: &RGBAColor,
-) {
+    size: (u32, u32),
+    color: &Rgb<u8>,
+    bg_color: &Rgb<u8>,
+) -> anyhow::Result<()> {
     if samples.is_empty() {
-        panic!("samples cannot be empty");
+        return Err(anyhow!("Decoded audio data is empty."));
     }
 
-    let mut quality = samples.len() / (size.0 * 100) as usize;
-    let root = BitMapBackend::new(out_path, *size).into_drawing_area();
-    root.fill(&TRANSPARENT).unwrap();
-
-    if quality < 1 {
-        quality = 1
+    let (width, height) = size;
+    if width < 1 || height < 1 {
+        return Err(anyhow!("Thumbnail size cannot be 0."));
     }
 
-    let range_x = 0.0..(samples.len() / quality) as f64;
-    let range_y = u8::MIN as f64..u8::MAX as f64;
+    let mut img = ImageBuffer::from_fn(width, height, |_, _| *bg_color);
+    let slice_size = samples.len() / width as usize;
 
-    let mut chart = ChartBuilder::on(&root)
-        .build_cartesian_2d(range_x, range_y)
-        .unwrap();
+    for slice_index in 0..width {
+        let mut min = 0xff;
+        let mut max = 0;
 
-    chart.configure_mesh().disable_x_mesh().draw().unwrap();
+        for sample_index in 0..slice_size {
+            let index = slice_index as usize * slice_size + sample_index;
+            let sample = samples[index];
 
-    let data_to_draw: Vec<(f64, f64)> = samples
-        .iter()
-        .step_by(quality)
-        .enumerate()
-        .map(|(x, &y)| (x as f64, y as f64))
-        .collect();
+            min = min.min(sample);
+            max = max.max(sample);
+        }
 
-    let mut new_color = *color;
-    new_color.3 = 0.2;
+        let min_y = ((min as f32 / 255.0) * height as f32) as u32;
+        let max_y = ((max as f32 / 255.0) * height as f32) as u32;
 
-    let series = LineSeries::new(data_to_draw, color);
-    chart.draw_series(series).unwrap();
+        for y in min_y..=max_y {
+            img.put_pixel(slice_index, y, *color);
+        }
+    }
+
+    img.save(out_path)?;
+
+    Ok(())
 }

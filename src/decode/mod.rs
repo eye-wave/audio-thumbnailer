@@ -1,7 +1,8 @@
+use anyhow::anyhow;
 use std::path::Path;
 use symphonia::{create_probe, decode_audio, get_cover_art};
 
-use crate::{config::Config, Error, Result};
+use crate::config::Config;
 
 mod symphonia;
 
@@ -11,7 +12,7 @@ pub enum VisualData {
     Pixels(Vec<u8>),
 }
 
-pub fn decode_visual_data<P: AsRef<Path>>(path: &P, config: &Config) -> Result<VisualData> {
+pub fn decode_visual_data<P: AsRef<Path>>(path: &P, config: &Config) -> anyhow::Result<VisualData> {
     let ext = path.as_ref().extension().and_then(|ext| ext.to_str());
     match ext {
         Some(ext) => match ext {
@@ -39,9 +40,9 @@ pub fn decode_visual_data<P: AsRef<Path>>(path: &P, config: &Config) -> Result<V
                     return Ok(VisualData::Samples(samples));
                 }
 
-                Err(Error::Custom("Failed to decode visual data"))
+                Err(anyhow!("Failed to decode visual data."))
             }
         },
-        None => Err(Error::Custom("Unsupported format")),
+        None => Err(anyhow!("Unsupported format.")),
     }
 }

@@ -1,4 +1,3 @@
-use crate::Result;
 use std::fs::File;
 use std::path::Path;
 use symphonia::core::io::MediaSourceStream;
@@ -12,7 +11,7 @@ use symphonia_core::meta::MetadataOptions;
 use symphonia_core::probe::Hint;
 use symphonia_core::probe::ProbeResult;
 
-pub fn create_probe<P: AsRef<Path>>(path: &P) -> Result<ProbeResult> {
+pub fn create_probe<P: AsRef<Path>>(path: &P) -> anyhow::Result<ProbeResult> {
     let probe = get_probe();
     let file = File::open(path).unwrap();
     let media_source = MediaSourceStream::new(Box::new(file), MediaSourceStreamOptions::default());

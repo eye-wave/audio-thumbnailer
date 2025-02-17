@@ -1,26 +1,10 @@
 mod args;
 mod enums;
-mod file;
 
 pub use args::*;
 pub use enums::*;
 
 use std::path::PathBuf;
-
-#[cfg(feature = "config_file")]
-#[derive(serde_derive::Deserialize)]
-pub struct ConfigDeserialize {
-    pub cover_settings: Option<CoverSettings>,
-
-    #[cfg(feature = "colored_waveform")]
-    pub audio_analyzer_settings: Option<AudioAnalyzerSettings>,
-
-    #[cfg(feature = "3d_wavetables")]
-    pub wavetable_settings: Option<WavetableSettings>,
-
-    pub waveform_settings: Option<WaveformSettings>,
-    pub debug: Option<DebugSettings>,
-}
 
 #[derive(Debug, Default)]
 pub struct Config {
@@ -37,7 +21,6 @@ pub struct Config {
 }
 
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct CoverSettings {
     pub no_cover: bool,
     pub size: u32,
@@ -110,7 +93,6 @@ impl Default for WavetableSettings {
 }
 
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct WaveformSettings {
     pub length: u32,
     pub height: u32,
@@ -119,6 +101,7 @@ pub struct WaveformSettings {
     // pub fill_type: String,
     // pub fill_colors: Option<Vec<String>>,
     pub fill_color: Option<String>,
+    pub bg_color: Option<String>,
     // pub fill_texture: Option<PathBuf>,
     // pub stroke_type: String,
     // pub stroke_texture: Option<String>,
@@ -137,6 +120,7 @@ impl Default for WaveformSettings {
             // fill_type: "solid".to_string(),
             // fill_colors: None,
             fill_color: None,
+            bg_color: None,
             // fill_texture: None,
             // stroke_type: "solid".to_string(),
             // stroke_texture: None,
@@ -148,7 +132,6 @@ impl Default for WaveformSettings {
 }
 
 #[derive(Debug, Default, Clone)]
-#[cfg_attr(feature = "config_file", derive(serde_derive::Deserialize))]
 pub struct DebugSettings {
     pub enabled: bool,
     pub log_file: Option<PathBuf>,

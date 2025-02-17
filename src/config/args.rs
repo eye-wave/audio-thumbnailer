@@ -7,28 +7,11 @@ use std::path::PathBuf;
 pub struct Args {
     ///input file name
     #[arg(short, long)]
-    #[cfg(feature = "config_file")]
-    pub input: Option<PathBuf>,
-
-    ///input file name
-    #[arg(short, long)]
-    #[cfg(not(feature = "config_file"))]
     pub input: PathBuf,
 
     ///output file name of the generated thumbnail
     #[arg(short, long)]
-    #[cfg(feature = "config_file")]
-    pub output: Option<PathBuf>,
-
-    ///output file name of the generated thumbnail
-    #[arg(short, long)]
-    #[cfg(not(feature = "config_file"))]
     pub output: PathBuf,
-
-    /// creates a config directory with an example config file
-    #[arg(long, action=ArgAction::SetTrue)]
-    #[cfg(feature = "config_file")]
-    pub init_config: bool,
 
     #[arg(long, action=ArgAction::SetTrue)]
     pub no_cover: Option<bool>,
@@ -55,6 +38,9 @@ pub struct Args {
 
     #[arg(long)]
     pub waveform_fill_color: Option<String>,
+
+    #[arg(long)]
+    pub waveform_bg_color: Option<String>,
 
     /// generate a waveform if getting a thumbnail fails
     #[arg(long)]
@@ -91,6 +77,11 @@ impl Args {
             .waveform_settings
             .fill_color
             .clone_from(&self.waveform_fill_color);
+
+        config
+            .waveform_settings
+            .bg_color
+            .clone_from(&self.waveform_bg_color);
 
         if let Some(v) = self.waveform_on_fail {
             config.cover_settings.waveform_on_fail = v
