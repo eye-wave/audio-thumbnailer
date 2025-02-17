@@ -47,44 +47,37 @@ pub struct Args {
     pub waveform_on_fail: Option<bool>,
 }
 
+macro_rules! apply_config {
+    ($left:expr,$right:expr) => {
+        if let Some(v) = $left.as_ref() {
+            $right = v.clone();
+        }
+    };
+}
+
+macro_rules! copy_to_config {
+    ($left:expr,$right:expr) => {
+        $left.clone_from(&$right);
+    };
+}
+
 impl Args {
     pub fn apply_to_config(&self, config: &mut Config) {
-        if let Some(v) = self.no_cover {
-            config.cover_settings.no_cover = v
-        }
+        apply_config!(self.no_cover, config.cover_settings.no_cover);
+        apply_config!(self.size, config.cover_settings.size);
+        apply_config!(self.interpolation, config.cover_settings.interpolation);
+        apply_config!(self.aspect_ratio, config.cover_settings.aspect_ratio);
+        apply_config!(self.waveform_length, config.waveform_settings.length);
+        apply_config!(self.waveform_height, config.waveform_settings.height);
+        apply_config!(
+            self.waveform_on_fail,
+            config.cover_settings.waveform_on_fail
+        );
 
-        if let Some(v) = self.size {
-            config.cover_settings.size = v
-        }
-
-        if let Some(v) = self.interpolation.as_ref() {
-            config.cover_settings.interpolation = v.clone()
-        }
-
-        if let Some(v) = self.aspect_ratio.as_ref() {
-            config.cover_settings.aspect_ratio = v.clone()
-        }
-
-        if let Some(v) = self.waveform_length {
-            config.waveform_settings.length = v
-        }
-
-        if let Some(v) = self.waveform_height {
-            config.waveform_settings.height = v
-        }
-
-        config
-            .waveform_settings
-            .fill_color
-            .clone_from(&self.waveform_fill_color);
-
-        config
-            .waveform_settings
-            .bg_color
-            .clone_from(&self.waveform_bg_color);
-
-        if let Some(v) = self.waveform_on_fail {
-            config.cover_settings.waveform_on_fail = v
-        }
+        copy_to_config!(
+            config.waveform_settings.fill_color,
+            self.waveform_fill_color
+        );
+        copy_to_config!(config.waveform_settings.bg_color, self.waveform_bg_color);
     }
 }
