@@ -2,7 +2,8 @@ use super::{AspectRatio, Config, InterpolationType};
 use clap::{ArgAction, Parser};
 use std::path::PathBuf;
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
     ///input file name

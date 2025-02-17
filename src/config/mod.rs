@@ -6,7 +6,8 @@ pub use enums::*;
 
 use std::path::PathBuf;
 
-#[derive(Debug, Default)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Default)]
 pub struct Config {
     pub cover_settings: CoverSettings,
 
@@ -20,7 +21,8 @@ pub struct Config {
     pub debug: DebugSettings,
 }
 
-#[derive(Debug, Clone)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Clone)]
 pub struct CoverSettings {
     pub no_cover: bool,
     pub size: u32,
@@ -44,7 +46,8 @@ impl Default for CoverSettings {
     }
 }
 
-#[derive(Debug, Clone)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Clone)]
 #[cfg(feature = "3d_wavetables")]
 #[cfg_attr(
     all(feature = "config_file", feature = "colored_waveform"),
@@ -65,7 +68,8 @@ impl Default for AudioAnalyzerSettings {
     }
 }
 
-#[derive(Debug, Clone)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Clone)]
 #[cfg(feature = "3d_wavetables")]
 #[cfg_attr(
     all(feature = "config_file", feature = "3d_wavetables"),
@@ -92,7 +96,8 @@ impl Default for WavetableSettings {
     }
 }
 
-#[derive(Debug, Clone)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Clone)]
 pub struct WaveformSettings {
     pub length: u32,
     pub height: u32,
@@ -131,7 +136,8 @@ impl Default for WaveformSettings {
     }
 }
 
-#[derive(Debug, Default, Clone)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Default, Clone)]
 pub struct DebugSettings {
     pub enabled: bool,
     pub log_file: Option<PathBuf>,
