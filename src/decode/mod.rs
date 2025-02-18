@@ -5,8 +5,8 @@ use std::path::Path;
 use symphonia::{create_probe, decode_audio, get_cover_art};
 
 pub mod midi;
-mod opus;
 mod symphonia;
+mod opus;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub enum VisualData {
