@@ -33,8 +33,8 @@ pub fn draw_waveform<P: AsRef<Path>>(
             max = max.max(sample);
         }
 
-        let min_y = ((min as f32 / 255.0) * height as f32) as u32;
-        let max_y = ((max as f32 / 255.0) * height as f32) as u32;
+        let min_y = ((min as f32 / 255.0) * (height - 1) as f32) as u32;
+        let max_y = ((max as f32 / 255.0) * (height - 1) as f32) as u32;
 
         if min_y == max_y {
             img.put_pixel(slice_index, min_y, *color);
