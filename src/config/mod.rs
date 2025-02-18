@@ -10,13 +10,6 @@ use std::path::PathBuf;
 #[derive(Default)]
 pub struct Config {
     pub cover_settings: CoverSettings,
-
-    #[cfg(feature = "colored_waveform")]
-    pub audio_analyzer_settings: AudioAnalyzerSettings,
-
-    #[cfg(feature = "3d_wavetables")]
-    pub wavetable_settings: WavetableSettings,
-
     pub waveform_settings: WaveformSettings,
     pub debug: DebugSettings,
 }
@@ -30,7 +23,6 @@ pub struct CoverSettings {
     pub aspect_ratio: AspectRatio,
     pub waveform_on_fail: bool,
     pub image_format: ImageFormat,
-    // pub overlay: String,
 }
 
 impl Default for CoverSettings {
@@ -48,71 +40,11 @@ impl Default for CoverSettings {
 
 #[cfg_attr(debug_assertions, derive(Debug))]
 #[derive(Clone)]
-#[cfg(feature = "3d_wavetables")]
-#[cfg_attr(
-    all(feature = "config_file", feature = "colored_waveform"),
-    derive(serde_derive::Deserialize)
-)]
-pub struct AudioAnalyzerSettings {
-    pub fft_enabled: bool,
-    pub fft_size: u64,
-}
-
-#[cfg(feature = "3d_wavetables")]
-impl Default for AudioAnalyzerSettings {
-    fn default() -> Self {
-        Self {
-            fft_enabled: true,
-            fft_size: 2048,
-        }
-    }
-}
-
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone)]
-#[cfg(feature = "3d_wavetables")]
-#[cfg_attr(
-    all(feature = "config_file", feature = "3d_wavetables"),
-    derive(serde_derive::Deserialize)
-)]
-pub struct WavetableSettings {
-    horizontal_rotation: f32,
-    vertical_rotation: f32,
-    width: f32,
-    height: f32,
-    y_offset: f32,
-}
-
-#[cfg(feature = "3d_wavetables")]
-impl Default for WavetableSettings {
-    fn default() -> Self {
-        Self {
-            horizontal_rotation: -0.24,
-            vertical_rotation: 1.22,
-            width: 0.72,
-            height: 0.1,
-            y_offset: 0.05,
-        }
-    }
-}
-
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone)]
 pub struct WaveformSettings {
     pub length: u32,
     pub height: u32,
-    // pub sample_style: String,
-    // pub sample_smoothing: f32,
-    // pub fill_type: String,
-    // pub fill_colors: Option<Vec<String>>,
     pub fill_color: Option<String>,
     pub bg_color: Option<String>,
-    // pub fill_texture: Option<PathBuf>,
-    // pub stroke_type: String,
-    // pub stroke_texture: Option<String>,
-    // pub stroke_color: Option<String>,
-    // pub stroke_colors: Option<String>,
-    // pub stroke_width: Option<u8>,
 }
 
 impl Default for WaveformSettings {
@@ -120,18 +52,8 @@ impl Default for WaveformSettings {
         Self {
             length: 200,
             height: 80,
-            // sample_style: "bars".to_string(),
-            // sample_smoothing: 1.0,
-            // fill_type: "solid".to_string(),
-            // fill_colors: None,
             fill_color: None,
             bg_color: None,
-            // fill_texture: None,
-            // stroke_type: "solid".to_string(),
-            // stroke_texture: None,
-            // stroke_color: None,
-            // stroke_colors: None,
-            // stroke_width: None,
         }
     }
 }

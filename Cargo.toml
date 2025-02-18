@@ -14,16 +14,10 @@ csscolorparser = { version = "^0.6.2", features = ["rgb", "named-colors"] }
 image = "^0.25.1"
 midly = "^0.5.3"
 ogg-opus = "^0.1.2"
-rustfft = { version = "^6.2.0", optional = true }
 serde = "^1.0.204"
 serde_derive = { version = "^1.0.204" }
 symphonia = { version = "^0.5.4", features = ["all"] }
 symphonia-core = "^0.5.4"
-
-[features]
-default = []
-colored_waveform = ["rustfft"]
-3d_wavetables = []
 
 [profile.release]
 codegen-units = 1

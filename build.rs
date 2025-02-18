@@ -4,14 +4,15 @@ fn main() -> std::io::Result<()> {
     let supported_types = [
         "audio/aac",
         "audio/flac",
+        "audio/midi",
+        "audio/mp2",
         "audio/mp4",
         "audio/mpeg",
+        "audio/x-aiff",
         "audio/x-caf",
-        "audio/x-matroska",
-        "audio/x-vorbis+ogg",
         "audio/x-opus+ogg",
+        "audio/x-vorbis+ogg",
         "audio/x-wav",
-        "audio/midi",
     ];
 
     let out_path = "audio.thumbnailer";

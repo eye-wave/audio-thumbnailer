@@ -23,12 +23,6 @@ This is a fast and lightweight audio file thumbnailer written in Rust. It genera
 |`audio/midi`|`.mid` `.midi` |✅|-
 |`audio/x-mpegurl`|`.m3u`|-|❌
 
-## Cargo features
-| feature_name | description | additional info | status |
-|-|-|-|-|
-| colored_waveform | adds a fft algorithm to the waveform generation to color them based on frequency | | ❌ Not implemented |
-| 3d_wavetables | checks for .wav files if they are a wavetable file. if they are, generates a 3d view of them | useful when dealing with samples for synthesizers like [serum](https://xferrecords.com/products/serum) or [vital](https://vital.audio)|❌ Not implemented |
-
 ### Installation
 
 Before using the thumbnailer, ensure that you have Rust installed on your system. You can install Rust from [here](https://www.rust-lang.org/tools/install).
