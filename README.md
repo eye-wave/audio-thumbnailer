@@ -19,7 +19,7 @@ This is a fast and lightweight audio file thumbnailer written in Rust. It genera
 |`audio/ogg`|`.oga` `.ogg` `.spx`|✅|❌
 |`audio/wav`|`.wav`|✅|❌
 |`audio/x-wavpack`|`.wv`|❌|❌
-|`audio/x-vorbis+ogg`|`.opus`|✅|❌
+|`audio/x-opus+ogg`|`.opus`|✅|❌
 |`audio/midi`|`.mid` `.midi` |✅|-
 |`audio/x-mpegurl`|`.m3u`|-|❌
 
