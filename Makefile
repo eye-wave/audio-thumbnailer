@@ -20,12 +20,14 @@ test:
 	rm -rf test/generated/*
 	mkdir -p test/generated
 
+	cargo build
+
 	find test -not -path '*generated*' -type f | \
 	while read input; do \
-		cargo run -- -i "$$input" -o "test/generated/$$(basename "$$input").jpg"; \
+		./target/debug/audio-thumbnailer -i "$$input" -o "test/generated/$$(basename "$$input").jpg"; \
 	done
 
-	cargo run -- -i test/1_fish.mp3 -o test/generated/thumbnail
+	./target/debug/audio-thumbnailer -i test/1_fish.mp3 -o test/generated/thumbnail
 	mv test/generated/thumbnail test/generated/thumbnail.jpg
 
 	cargo test
