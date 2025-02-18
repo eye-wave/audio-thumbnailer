@@ -5,6 +5,7 @@ use std::path::Path;
 use symphonia::{create_probe, decode_audio, get_cover_art};
 
 pub mod midi;
+mod opus;
 mod symphonia;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
@@ -29,7 +30,8 @@ pub fn decode_visual_data<P: AsRef<Path>>(path: &P, config: &Config) -> anyhow::
                 unimplemented!()
             }
             "opus" => {
-                unimplemented!()
+                let samples = opus::decode_audio(path)?;
+                Ok(VisualData::Samples(samples))
             }
             _ => {
                 let mut probe = create_probe(&path).expect("Failed to create audio decoder");
