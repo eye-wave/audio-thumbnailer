@@ -35,6 +35,10 @@ impl Gradient {
         let step_index = (step * num_steps as f32).min(num_steps as f32) as usize;
         let t = step * num_steps as f32 - step_index as f32;
 
+        if step_index == self.values.len() - 1 {
+            return self.values[step_index];
+        }
+
         let start_color = &self.values[step_index];
         let end_color = &self.values[step_index + 1];
 
