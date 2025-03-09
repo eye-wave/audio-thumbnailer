@@ -18,14 +18,14 @@ impl Default for InterpolationType {
     }
 }
 
-impl InterpolationType {
-    pub fn to_filter_type(&self) -> FilterType {
-        match self {
-            Self::CatmullRom => FilterType::CatmullRom,
-            Self::Gaussian => FilterType::Gaussian,
-            Self::Lanczos3 => FilterType::Lanczos3,
-            Self::Nearest => FilterType::Nearest,
-            Self::Triangle => FilterType::Triangle,
+impl From<InterpolationType> for FilterType {
+    fn from(value: InterpolationType) -> Self {
+        match value {
+            InterpolationType::CatmullRom => FilterType::CatmullRom,
+            InterpolationType::Gaussian => FilterType::Gaussian,
+            InterpolationType::Lanczos3 => FilterType::Lanczos3,
+            InterpolationType::Nearest => FilterType::Nearest,
+            InterpolationType::Triangle => FilterType::Triangle,
         }
     }
 }
@@ -50,14 +50,4 @@ pub enum ImageFormat {
     Jpeg,
     Png,
     Webp,
-}
-
-impl ImageFormat {
-    pub fn to_image_enum(&self) -> image::ImageFormat {
-        match self {
-            Self::Jpeg => image::ImageFormat::Jpeg,
-            Self::Png => image::ImageFormat::Png,
-            Self::Webp => image::ImageFormat::WebP,
-        }
-    }
 }

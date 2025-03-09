@@ -1,66 +1,86 @@
-mod args;
 mod enums;
 
-pub use args::*;
-pub use enums::*;
+pub use enums::{AspectRatio, InterpolationType};
 
+use clap::{ArgAction, Parser};
 use std::path::PathBuf;
 
+#[derive(Parser)]
 #[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Default)]
+#[command(author, version, about, long_about = None)]
 pub struct Config {
-    pub cover_settings: CoverSettings,
-    pub waveform_settings: WaveformSettings,
-    pub debug: DebugSettings,
+    ///input file name
+    #[arg(short, long)]
+    pub input: PathBuf,
+
+    ///output file name of the generated thumbnail
+    #[arg(short, long)]
+    pub output: PathBuf,
+
+    #[arg(long, action=ArgAction::SetTrue)]
+    no_cover: Option<bool>,
+
+    /// size of the generated cover art
+    /// for example size of 64 will generate as 64x64 cover
+    /// when using aspect_ratio auto, size will be used as a smaller side of the rectangle
+    #[arg(long, short, verbatim_doc_comment)]
+    cover_size: Option<u32>,
+
+    /// interpolation algorithm used for scaling the image
+    #[arg(long)]
+    interpolation: Option<InterpolationType>,
+
+    /// aspect ratio used for image generation
+    #[arg(long, short)]
+    aspect_ratio: Option<AspectRatio>,
+
+    #[arg(long)]
+    waveform_length: Option<u32>,
+
+    #[arg(long)]
+    waveform_height: Option<u32>,
+
+    #[arg(long)]
+    waveform_fill_color: Option<String>,
+
+    #[arg(long)]
+    waveform_bg_color: Option<String>,
+
+    /// generate a waveform if getting a thumbnail fails
+    #[arg(long)]
+    waveform_on_fail: Option<bool>,
 }
 
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone)]
-pub struct CoverSettings {
-    pub no_cover: bool,
-    pub size: u32,
-    pub interpolation: InterpolationType,
-    pub aspect_ratio: AspectRatio,
-    pub waveform_on_fail: bool,
-    pub image_format: ImageFormat,
-}
-
-impl Default for CoverSettings {
-    fn default() -> Self {
-        Self {
-            no_cover: false,
-            aspect_ratio: AspectRatio::default(),
-            interpolation: InterpolationType::default(),
-            waveform_on_fail: true,
-            image_format: ImageFormat::Jpeg,
-            size: 64,
-        }
+impl Config {
+    pub fn no_cover(&self) -> bool {
+        self.no_cover.unwrap_or(false)
     }
-}
 
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone)]
-pub struct WaveformSettings {
-    pub length: u32,
-    pub height: u32,
-    pub fill_color: Option<String>,
-    pub bg_color: Option<String>,
-}
-
-impl Default for WaveformSettings {
-    fn default() -> Self {
-        Self {
-            length: 250,
-            height: 120,
-            fill_color: None,
-            bg_color: None,
-        }
+    pub fn aspect_ratio(&self) -> AspectRatio {
+        self.aspect_ratio.clone().unwrap_or_default()
     }
-}
 
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Default, Clone)]
-pub struct DebugSettings {
-    pub enabled: bool,
-    pub log_file: Option<PathBuf>,
+    pub fn interpolation(&self) -> InterpolationType {
+        self.interpolation.clone().unwrap_or_default()
+    }
+
+    pub fn cover_size(&self) -> u32 {
+        self.cover_size.unwrap_or(128)
+    }
+
+    pub fn waveform_length(&self) -> u32 {
+        self.waveform_length.unwrap_or(256)
+    }
+
+    pub fn waveform_height(&self) -> u32 {
+        self.waveform_height.unwrap_or(120)
+    }
+
+    pub fn waveform_fill_color(&self) -> String {
+        self.waveform_fill_color.clone().unwrap_or("red".to_owned())
+    }
+
+    pub fn waveform_bg_color(&self) -> String {
+        self.waveform_bg_color.clone().unwrap_or("#000".to_owned())
+    }
 }

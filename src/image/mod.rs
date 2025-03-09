@@ -21,43 +21,27 @@ impl VisualData {
     pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> anyhow::Result<()> {
         match self {
             Self::Samples(samples) => {
-                let w = config.waveform_settings.length;
-                let h = config.waveform_settings.height;
+                let w = config.waveform_length();
+                let h = config.waveform_height();
 
-                let bg_color = config
-                    .waveform_settings
-                    .bg_color
-                    .clone()
-                    .and_then(|c| parse_color(&c).ok())
-                    .unwrap_or(Rgb([0; 3]));
+                let bg_color = parse_color(&config.waveform_bg_color())?;
 
                 draw_waveform(samples, &path, (w, h), &bg_color)?;
 
                 Ok(())
             }
             Self::Pixels(image_data) => {
-                let image = load_and_resize(image_data, &config.cover_settings)?;
-                write_image(image, &path, config)?;
+                let image = load_and_resize(image_data, config)?;
+                write_image(image, &path)?;
 
                 Ok(())
             }
             Self::Midi(midi) => {
-                let w = config.waveform_settings.length;
-                let h = config.waveform_settings.height;
+                let w = config.waveform_length();
+                let h = config.waveform_height();
 
-                let color = config
-                    .waveform_settings
-                    .fill_color
-                    .clone()
-                    .and_then(|c| parse_color(&c).ok())
-                    .unwrap_or(Rgb([0xff, 0, 0]));
-
-                let bg_color = config
-                    .waveform_settings
-                    .bg_color
-                    .clone()
-                    .and_then(|c| parse_color(&c).ok())
-                    .unwrap_or(Rgb([0; 3]));
+                let color = parse_color(&config.waveform_fill_color())?;
+                let bg_color = parse_color(&config.waveform_bg_color())?;
 
                 draw_midi(midi, &path, (w, h), &color, &bg_color)?;
 
@@ -67,11 +51,7 @@ impl VisualData {
     }
 }
 
-pub fn write_image<P: AsRef<Path>>(
-    image: DynamicImage,
-    path: &P,
-    config: &Config,
-) -> anyhow::Result<()> {
+pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> anyhow::Result<()> {
     let format = path
         .as_ref()
         .extension()
@@ -82,7 +62,7 @@ pub fn write_image<P: AsRef<Path>>(
             "png" => Some(ImageFormat::Png),
             _ => None,
         })
-        .unwrap_or(config.cover_settings.image_format.to_image_enum());
+        .unwrap_or(image::ImageFormat::Jpeg);
 
     Ok(image.save_with_format(path, format)?)
 }
