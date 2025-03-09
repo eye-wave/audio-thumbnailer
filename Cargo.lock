@@ -105,8 +105,6 @@ dependencies = [
  "ogg-opus",
  "rayon",
  "rustfft",
- "serde",
- "serde_derive",
  "symphonia",
  "symphonia-core",
 ]

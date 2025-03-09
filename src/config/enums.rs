@@ -1,9 +1,8 @@
 use clap::ValueEnum;
 use image::imageops::FilterType;
-use serde_derive::Deserialize;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone, Deserialize, ValueEnum)]
+#[derive(Clone, ValueEnum)]
 pub enum InterpolationType {
     Lanczos3,
     CatmullRom,
@@ -31,7 +30,7 @@ impl From<InterpolationType> for FilterType {
 }
 
 #[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone, Deserialize, ValueEnum)]
+#[derive(Clone, ValueEnum)]
 pub enum AspectRatio {
     Auto,
     Crop,
@@ -42,12 +41,4 @@ impl Default for AspectRatio {
     fn default() -> Self {
         Self::Crop
     }
-}
-
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone, Deserialize, ValueEnum)]
-pub enum ImageFormat {
-    Jpeg,
-    Png,
-    Webp,
 }

@@ -48,7 +48,7 @@ pub fn decode_visual_data(path: &str, config: &Config) -> anyhow::Result<VisualD
         "audio/aac" | "audio/flac" | "audio/mp2" | "audio/mp4" | "audio/mpeg" | "audio/x-aiff"
         | "audio/x-caf" | "audio/x-vorbis+ogg" | "audio/x-wav" => {
             let mut probe = create_probe(&path).expect("Failed to create audio decoder");
-            if !config.no_cover() {
+            if !config.cover.no_cover {
                 if let Some(image_data) = get_cover_art(&mut probe) {
                     return Ok(VisualData::Pixels(image_data));
                 }

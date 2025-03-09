@@ -16,8 +16,6 @@ midly = "^0.5.3"
 ogg-opus = "^0.1.2"
 rayon = "^1.10.0"
 rustfft = "^6.2.0"
-serde = "^1.0.204"
-serde_derive = { version = "^1.0.204" }
 symphonia = { version = "^0.5.4", features = ["all"] }
 symphonia-core = "^0.5.4"
 
