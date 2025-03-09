@@ -50,8 +50,8 @@ pub struct WaveformSettings {
 impl Default for WaveformSettings {
     fn default() -> Self {
         Self {
-            length: 200,
-            height: 80,
+            length: 250,
+            height: 120,
             fill_color: None,
             bg_color: None,
         }

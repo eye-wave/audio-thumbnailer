@@ -24,13 +24,6 @@ impl VisualData {
                 let w = config.waveform_settings.length;
                 let h = config.waveform_settings.height;
 
-                let color = config
-                    .waveform_settings
-                    .fill_color
-                    .clone()
-                    .and_then(|c| parse_color(&c).ok())
-                    .unwrap_or(Rgb([0xff, 0, 0]));
-
                 let bg_color = config
                     .waveform_settings
                     .bg_color
@@ -38,7 +31,7 @@ impl VisualData {
                     .and_then(|c| parse_color(&c).ok())
                     .unwrap_or(Rgb([0; 3]));
 
-                draw_waveform(samples, &path, (w, h), &color, &bg_color)?;
+                draw_waveform(samples, &path, (w, h), &bg_color)?;
 
                 Ok(())
             }

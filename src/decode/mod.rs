@@ -10,7 +10,7 @@ mod symphonia;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub enum VisualData {
-    Samples(Vec<u8>),
+    Samples(Vec<f32>),
     Midi(MidiTracks),
     Pixels(Vec<u8>),
 }
@@ -30,17 +30,15 @@ fn get_mime_type(path: &str) -> anyhow::Result<String> {
 pub fn decode_visual_data(path: &str, config: &Config) -> anyhow::Result<VisualData> {
     let mime = get_mime_type(path)?;
 
-    println!("{mime}");
-
     match mime.as_ref() {
-        "m3u" => {
+        "audio/x-mpegurl" => {
             unimplemented!()
         }
-        "midi" | "mid" | "rmi" => {
+        "audio/midi" => {
             let tracks = decode_midi(&path)?;
             Ok(VisualData::Midi(tracks))
         }
-        "wv" => {
+        "audio/x-wavpack" => {
             unimplemented!()
         }
         "audio/x-opus+ogg" => {
