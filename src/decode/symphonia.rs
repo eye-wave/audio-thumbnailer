@@ -38,21 +38,21 @@ pub fn get_cover_art(probe: &mut ProbeResult) -> Option<Vec<u8>> {
     None
 }
 
-pub fn decode_audio(probe: &mut ProbeResult) -> Option<Vec<u8>> {
+pub fn decode_audio(probe: &mut ProbeResult) -> Option<Vec<f32>> {
     let track = probe.format.default_track().unwrap();
 
     let codec_registry = get_codecs();
     let mut decoder = codec_registry
         .make(&track.codec_params, &DecoderOptions::default())
         .unwrap();
-    let mut samples: Vec<u8> = vec![];
+    let mut samples: Vec<f32> = vec![];
 
     while let Ok(packet) = probe.format.next_packet() {
         let audio_buf = decoder.decode(&packet).unwrap();
 
         let spec = *audio_buf.spec();
         let duration = audio_buf.capacity() as u64;
-        let mut sample_buf = Some(SampleBuffer::<u8>::new(duration, spec));
+        let mut sample_buf = Some(SampleBuffer::<f32>::new(duration, spec));
 
         if let Some(buf) = &mut sample_buf {
             buf.copy_interleaved_ref(audio_buf);

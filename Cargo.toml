@@ -14,8 +14,8 @@ csscolorparser = { version = "^0.6.2", features = ["rgb", "named-colors"] }
 image = "^0.25.1"
 midly = "^0.5.3"
 ogg-opus = "^0.1.2"
-serde = "^1.0.204"
-serde_derive = { version = "^1.0.204" }
+rayon = "^1.10.0"
+rustfft = "^6.2.0"
 symphonia = { version = "^0.5.4", features = ["all"] }
 symphonia-core = "^0.5.4"
 
