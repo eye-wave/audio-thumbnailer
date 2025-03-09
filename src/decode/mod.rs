@@ -1,7 +1,7 @@
 use crate::config::Config;
 use anyhow::anyhow;
 use midi::{decode_midi, MidiTracks};
-use std::path::Path;
+use std::process::Command;
 use symphonia::{create_probe, decode_audio, get_cover_art};
 
 pub mod midi;
@@ -15,39 +15,53 @@ pub enum VisualData {
     Pixels(Vec<u8>),
 }
 
-pub fn decode_visual_data<P: AsRef<Path>>(path: &P, config: &Config) -> anyhow::Result<VisualData> {
-    let ext = path.as_ref().extension().and_then(|ext| ext.to_str());
-    match ext {
-        Some(ext) => match ext {
-            "m3u" => {
-                unimplemented!()
-            }
-            "midi" | "mid" | "rmi" => {
-                let tracks = decode_midi(path)?;
-                Ok(VisualData::Midi(tracks))
-            }
-            "wv" => {
-                unimplemented!()
-            }
-            "opus" => {
-                let samples = opus::decode_audio(path)?;
-                Ok(VisualData::Samples(samples))
-            }
-            _ => {
-                let mut probe = create_probe(&path).expect("Failed to create audio decoder");
-                if !config.cover_settings.no_cover {
-                    if let Some(image_data) = get_cover_art(&mut probe) {
-                        return Ok(VisualData::Pixels(image_data));
-                    }
-                }
+fn get_mime_type(path: &str) -> anyhow::Result<String> {
+    let output = Command::new("xdg-mime")
+        .args(["query", "filetype", path])
+        .output()?;
 
-                if let Some(samples) = decode_audio(&mut probe) {
-                    return Ok(VisualData::Samples(samples));
-                }
+    if output.status.success() {
+        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    } else {
+        Err(anyhow!(""))
+    }
+}
 
-                Err(anyhow!("Failed to decode visual data."))
+pub fn decode_visual_data(path: &str, config: &Config) -> anyhow::Result<VisualData> {
+    let mime = get_mime_type(path)?;
+
+    println!("{mime}");
+
+    match mime.as_ref() {
+        "m3u" => {
+            unimplemented!()
+        }
+        "midi" | "mid" | "rmi" => {
+            let tracks = decode_midi(&path)?;
+            Ok(VisualData::Midi(tracks))
+        }
+        "wv" => {
+            unimplemented!()
+        }
+        "audio/x-opus+ogg" => {
+            let samples = opus::decode_audio(&path)?;
+            Ok(VisualData::Samples(samples))
+        }
+        "audio/aac" | "audio/flac" | "audio/mp2" | "audio/mp4" | "audio/mpeg" | "audio/x-aiff"
+        | "audio/x-caf" | "audio/x-vorbis+ogg" | "audio/x-wav" => {
+            let mut probe = create_probe(&path).expect("Failed to create audio decoder");
+            if !config.cover_settings.no_cover {
+                if let Some(image_data) = get_cover_art(&mut probe) {
+                    return Ok(VisualData::Pixels(image_data));
+                }
             }
-        },
-        None => Err(anyhow!("Unsupported format.")),
+
+            if let Some(samples) = decode_audio(&mut probe) {
+                return Ok(VisualData::Samples(samples));
+            }
+
+            Err(anyhow!("Failed to decode visual data."))
+        }
+        _ => Err(anyhow!("Unsupported format.")),
     }
 }

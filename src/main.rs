@@ -25,7 +25,7 @@ fn main() -> anyhow::Result<ExitCode> {
 
     args.apply_to_config(&mut config);
 
-    decode_visual_data(&input, &config)?.draw_and_save(&output, &config)?;
+    decode_visual_data(input.to_str().unwrap(), &config)?.draw_and_save(&output, &config)?;
 
     Ok(ExitCode::SUCCESS)
 }
