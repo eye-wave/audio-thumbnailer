@@ -14,18 +14,23 @@ pub struct Config {
 #[derive(Parser, Clone)]
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub struct WaveformConfig {
+    /// Background color for the waveform.
     #[clap(long, default_value = "black")]
     pub bg_color: String,
 
-    #[clap(long, default_value = "red")]
+    /// Fill color for the waveform. If more than one color is specified waveform will be drawn with a gradient.
+    #[clap(long, default_value = "red", num_args = ..=5)]
     pub fill_color: Vec<String>,
 
+    /// Length of the waveform thumbnail in pixels
     #[clap(long, default_value_t = 256)]
     pub length: u32,
 
+    /// Height of the waveform thumbnail in pixels
     #[clap(long, default_value_t = 96)]
     pub height: u32,
 
+    /// Generate waveform if album cover is not found.
     #[clap(long, default_value_t = false, action = ArgAction::SetTrue)]
     pub waveform_on_fail: bool,
 }
@@ -33,9 +38,11 @@ pub struct WaveformConfig {
 #[derive(Parser, Clone)]
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub struct CoverConfig {
+    /// Do not look for album covers, just draw the waveform.
     #[clap(long, default_value_t = false, action = ArgAction::SetTrue)]
     pub no_cover: bool,
 
+    /// Both width and weight for a album cover
     #[clap(long, default_value_t = 128)]
     pub size: u32,
 

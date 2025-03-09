@@ -1,3 +1,4 @@
+use super::Gradient;
 use anyhow::anyhow;
 use image::{ImageBuffer, Rgb};
 use rayon::prelude::*;
@@ -9,6 +10,7 @@ pub fn draw_waveform<P: AsRef<Path>>(
     samples: &[f32],
     out_path: &P,
     size: (u32, u32),
+    gradient: &Gradient,
     bg_color: &Rgb<u8>,
 ) -> anyhow::Result<()> {
     if samples.is_empty() {
@@ -26,28 +28,31 @@ pub fn draw_waveform<P: AsRef<Path>>(
     let fft = planner.plan_fft_forward(window_size);
 
     let fft_slice_count = samples.len() / window_size;
-    let dominant_frequencies: Vec<u8> = (0..fft_slice_count)
-        .into_par_iter()
-        .map(|i| {
-            let start = i * window_size;
-            let end = start + window_size;
+    let dominant_frequencies: Vec<u8> = if gradient.has_single_color() {
+        vec![]
+    } else {
+        (0..fft_slice_count)
+            .into_par_iter()
+            .map(|i| {
+                let start = i * window_size;
+                let end = start + window_size;
 
-            let mut window: Vec<Complex<f32>> = samples[start..end]
-                .iter()
-                .map(|&sample| Complex::new(sample, 0.0))
-                .collect();
+                let mut window: Vec<Complex<f32>> = samples[start..end]
+                    .iter()
+                    .map(|&sample| Complex::new(sample, 0.0))
+                    .collect();
 
-            fft.process(&mut window);
+                fft.process(&mut window);
 
-            window
-                .iter()
-                .map(|c| (c.re * c.re + c.im * c.im).sqrt())
-                .fold(0.0, f32::max) as u8
-        })
-        .collect();
+                window
+                    .iter()
+                    .map(|c| (c.re * c.re + c.im * c.im).sqrt())
+                    .fold(0.0, f32::max) as u8
+            })
+            .collect()
+    };
 
     let img = Mutex::new(ImageBuffer::from_fn(width, height, |_, _| *bg_color));
-
     let slice_size = samples.len() / width as usize;
 
     (0..width).into_par_iter().for_each(|slice_index| {
@@ -65,10 +70,15 @@ pub fn draw_waveform<P: AsRef<Path>>(
         let min_y = (((min + 1.0) / 2.0) * (height - 1) as f32) as u32;
         let max_y = (((max + 1.0) / 2.0) * (height - 1) as f32) as u32;
 
-        let i = ((slice_index as f32 / width as f32) * fft_slice_count as f32) as usize;
-        let freq = dominant_frequencies[i];
+        let color = if gradient.has_single_color() {
+            gradient.step(0.0)
+        } else {
+            let step = slice_index as f32 / width as f32;
+            let i = (step * fft_slice_count as f32) as usize;
+            let freq = dominant_frequencies[i];
 
-        let color = Rgb::from([0xff, freq, 0]);
+            gradient.step(freq as f32 / 255.0)
+        };
 
         let mut img = img.lock().unwrap();
 

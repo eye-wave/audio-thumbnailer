@@ -1,21 +1,16 @@
 use crate::{config::Config, decode::VisualData};
+use color::{parse_color, Gradient};
 use cover_art::load_and_resize;
-use image::{DynamicImage, ImageFormat, Rgb};
+use image::{DynamicImage, ImageFormat};
 use midi::draw_midi;
 use std::path::Path;
 use waveform::draw_waveform;
 
+pub mod color;
+
 mod cover_art;
 mod midi;
 mod waveform;
-
-fn parse_color(color: &str) -> anyhow::Result<Rgb<u8>> {
-    let parsed = csscolorparser::parse(color)?;
-    let rgba = parsed.to_rgba8();
-    let rgb = Rgb([rgba[0], rgba[1], rgba[2]]);
-
-    Ok(rgb)
-}
 
 impl VisualData {
     pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> anyhow::Result<()> {
@@ -24,9 +19,10 @@ impl VisualData {
                 let w = config.waveform.length;
                 let h = config.waveform.height;
 
+                let gradient = Gradient::new(&config.waveform.fill_color);
                 let bg_color = parse_color(&config.waveform.bg_color)?;
 
-                draw_waveform(samples, &path, (w, h), &bg_color)?;
+                draw_waveform(samples, &path, (w, h), &gradient, &bg_color)?;
 
                 Ok(())
             }
