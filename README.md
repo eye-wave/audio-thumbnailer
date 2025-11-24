@@ -57,3 +57,5 @@ audio-thumbnailer -i input.mp3 -o thumbnail.png
 ## Contributing
 
 Contributions are welcome! If you have any suggestions, bug fixes, or improvements, feel free to open an issue or submit a pull request.
+
+test
