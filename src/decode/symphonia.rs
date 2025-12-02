@@ -1,15 +1,15 @@
 use std::fs::File;
 use std::path::Path;
+use symphonia::core::audio::SampleBuffer;
+use symphonia::core::codecs::DecoderOptions;
+use symphonia::core::formats::FormatOptions;
 use symphonia::core::io::MediaSourceStream;
+use symphonia::core::io::MediaSourceStreamOptions;
+use symphonia::core::meta::MetadataOptions;
+use symphonia::core::probe::Hint;
+use symphonia::core::probe::ProbeResult;
 use symphonia::default::get_codecs;
 use symphonia::default::get_probe;
-use symphonia_core::audio::SampleBuffer;
-use symphonia_core::codecs::DecoderOptions;
-use symphonia_core::formats::FormatOptions;
-use symphonia_core::io::MediaSourceStreamOptions;
-use symphonia_core::meta::MetadataOptions;
-use symphonia_core::probe::Hint;
-use symphonia_core::probe::ProbeResult;
 
 pub fn create_probe<P: AsRef<Path>>(path: &P) -> anyhow::Result<ProbeResult> {
     let probe = get_probe();
@@ -43,8 +43,9 @@ pub fn decode_audio(probe: &mut ProbeResult) -> Option<Vec<f32>> {
 
     let codec_registry = get_codecs();
     let mut decoder = codec_registry
-        .make(&track.codec_params, &DecoderOptions::default())
-        .unwrap();
+        .make(&track.codec_params, &DecoderOptions { verify: false })
+        .ok()?;
+
     let mut samples: Vec<f32> = vec![];
 
     while let Ok(packet) = probe.format.next_packet() {

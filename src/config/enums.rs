@@ -3,19 +3,16 @@ use image::imageops::FilterType;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
 #[derive(Clone, ValueEnum)]
+#[derive(Default)]
 pub enum InterpolationType {
     Lanczos3,
     CatmullRom,
     Gaussian,
     Nearest,
+    #[default]
     Triangle,
 }
 
-impl Default for InterpolationType {
-    fn default() -> Self {
-        Self::Triangle
-    }
-}
 
 impl From<InterpolationType> for FilterType {
     fn from(value: InterpolationType) -> Self {
@@ -31,14 +28,11 @@ impl From<InterpolationType> for FilterType {
 
 #[cfg_attr(debug_assertions, derive(Debug))]
 #[derive(Clone, ValueEnum)]
+#[derive(Default)]
 pub enum AspectRatio {
     Auto,
+    #[default]
     Crop,
     Stretch,
 }
 
-impl Default for AspectRatio {
-    fn default() -> Self {
-        Self::Crop
-    }
-}
