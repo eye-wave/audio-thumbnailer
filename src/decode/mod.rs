@@ -30,6 +30,12 @@ fn get_mime_type(path: &str) -> anyhow::Result<String> {
 pub fn decode_visual_data(path: &str, config: &Config) -> anyhow::Result<VisualData> {
     let mime = get_mime_type(path)?;
 
+    if path.ends_with(".opus") {
+        if let Ok(samples) = opus::decode_audio(&path) {
+            return Ok(VisualData::Samples(samples));
+        }
+    }
+
     match mime.as_ref() {
         "audio/x-mpegurl" => {
             unimplemented!()
@@ -38,19 +44,13 @@ pub fn decode_visual_data(path: &str, config: &Config) -> anyhow::Result<VisualD
             let tracks = decode_midi(&path)?;
             Ok(VisualData::Midi(tracks))
         }
-        "audio/x-wavpack" => {
-            unimplemented!()
-        }
-        "audio/x-opus+ogg" => {
-            let samples = opus::decode_audio(&path)?;
-            Ok(VisualData::Samples(samples))
-        }
         "audio/aac" | "audio/flac" | "audio/mp2" | "audio/mp4" | "audio/mpeg" | "audio/x-aiff"
-        | "audio/x-caf" | "audio/x-vorbis+ogg" | "audio/x-wav" => {
+        | "audio/x-caf" | "audio/x-vorbis+ogg" | "audio/x-wav" | "audio/x-opus+ogg"
+        | "audio/ogg" | "audio/x-wavpack" => {
             let mut probe = create_probe(&path).expect("Failed to create audio decoder");
             if !config.cover.no_cover {
                 if let Some(image_data) = get_cover_art(&mut probe) {
-                    return Ok(VisualData::Pixels(image_data));
+                    return Ok(VisualData::Pixels(image_data.to_vec()));
                 }
             }
 

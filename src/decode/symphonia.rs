@@ -30,7 +30,7 @@ pub fn get_cover_art(probe: &mut ProbeResult) -> Option<Vec<u8>> {
     if let Some(metadata) = probe.metadata.get() {
         if let Some(current) = metadata.current() {
             if let Some(visual) = current.visuals().first() {
-                return Some(Vec::from(visual.data.clone()));
+                return Some(visual.data.to_vec());
             }
         }
     }

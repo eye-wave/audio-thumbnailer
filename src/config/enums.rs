@@ -2,8 +2,7 @@ use clap::ValueEnum;
 use image::imageops::FilterType;
 
 #[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone, ValueEnum)]
-#[derive(Default)]
+#[derive(Clone, ValueEnum, Default)]
 pub enum InterpolationType {
     Lanczos3,
     CatmullRom,
@@ -12,7 +11,6 @@ pub enum InterpolationType {
     #[default]
     Triangle,
 }
-
 
 impl From<InterpolationType> for FilterType {
     fn from(value: InterpolationType) -> Self {
@@ -27,12 +25,10 @@ impl From<InterpolationType> for FilterType {
 }
 
 #[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone, ValueEnum)]
-#[derive(Default)]
+#[derive(Clone, ValueEnum, Default)]
 pub enum AspectRatio {
     Auto,
     #[default]
     Crop,
     Stretch,
 }
-
