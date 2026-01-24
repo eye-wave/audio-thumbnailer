@@ -115,10 +115,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "audio-formats"
+version = "0.1.0"
+
+[[package]]
 name = "audio-thumbnailer"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
- "anyhow",
+ "audio-formats",
  "clap",
  "csscolorparser",
  "image",
@@ -126,6 +130,7 @@ dependencies = [
  "ogg-opus",
  "rayon",
  "symphonia",
+ "thiserror 2.0.18",
 ]
 
 [[package]]

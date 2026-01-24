@@ -12,8 +12,30 @@ mod cover_art;
 mod midi;
 mod waveform;
 
+#[derive(Debug, thiserror::Error)]
+pub enum DrawError {
+    #[error("Decoded audio data is empty.")]
+    DecoderEmpty,
+
+    #[error("Thumbnail size cannot be 0.")]
+    ThumbnailZero,
+
+    #[error("Not enough samples for the given width.")]
+    NotEnoughSamples,
+
+    #[error("{0}")]
+    Image(#[from] image::ImageError),
+
+    #[error("{0}")]
+    Color(#[from] csscolorparser::ParseColorError),
+}
+
 impl VisualData {
-    pub fn draw_and_save<P: AsRef<Path>>(&self, path: &P, config: &Config) -> anyhow::Result<()> {
+    pub fn draw_and_save<P: AsRef<Path>>(
+        &self,
+        path: &P,
+        config: &Config,
+    ) -> Result<(), DrawError> {
         match self {
             Self::Samples(samples) => {
                 let w = config.waveform.length;
@@ -47,7 +69,7 @@ impl VisualData {
     }
 }
 
-pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> anyhow::Result<()> {
+pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> Result<(), image::ImageError> {
     let format = path
         .as_ref()
         .extension()
@@ -60,5 +82,5 @@ pub fn write_image<P: AsRef<Path>>(image: DynamicImage, path: &P) -> anyhow::Res
         })
         .unwrap_or(image::ImageFormat::Jpeg);
 
-    Ok(image.save_with_format(path, format)?)
+    image.save_with_format(path, format)
 }

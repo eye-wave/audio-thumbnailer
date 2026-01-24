@@ -1,57 +1,67 @@
-use super::Gradient;
-use anyhow::anyhow;
+use std::path::Path;
+
 use image::{ImageBuffer, Rgb};
 use rayon::prelude::*;
-use std::path::Path;
-use std::sync::Mutex;
+
+use crate::image::DrawError;
+
+use super::Gradient;
 
 pub fn draw_waveform<P: AsRef<Path>>(
-    samples: &[f32],
+    samples: &[u8],
     out_path: &P,
     size: (u32, u32),
     gradient: &Gradient,
     bg_color: &Rgb<u8>,
-) -> anyhow::Result<()> {
+) -> Result<(), DrawError> {
     if samples.is_empty() {
-        return Err(anyhow!("Decoded audio data is empty."));
+        return Err(DrawError::DecoderEmpty);
     }
 
     let (width, height) = size;
     if width < 1 || height < 1 {
-        return Err(anyhow!("Thumbnail size cannot be 0."));
+        return Err(DrawError::ThumbnailZero);
     }
 
-    let img = Mutex::new(ImageBuffer::from_fn(width, height, |_, _| *bg_color));
+    let mut img = ImageBuffer::from_fn(width, height, |_, _| *bg_color);
     let slice_size = samples.len() / width as usize;
 
-    (0..width).into_par_iter().for_each(|slice_index| {
-        let mut min: f32 = 1.0;
-        let mut max: f32 = -1.0;
+    if slice_size == 0 {
+        return Err(DrawError::NotEnoughSamples);
+    }
 
-        for sample_index in 0..slice_size {
-            let index = slice_index as usize * slice_size + sample_index;
-            let sample = samples[index];
+    let column_data: Vec<(u32, u32)> = (0..width)
+        .into_par_iter()
+        .map(|slice_index| {
+            let mut min = u8::MAX;
+            let mut max = u8::MIN;
 
-            min = min.min(sample);
-            max = max.max(sample);
-        }
+            let start_idx = slice_index as usize * slice_size;
+            let end_idx = (start_idx + slice_size).min(samples.len());
 
-        let min_y = (((min + 1.0) / 2.0) * (height - 1) as f32) as u32;
-        let max_y = (((max + 1.0) / 2.0) * (height - 1) as f32) as u32;
+            for sample in &samples[start_idx..end_idx] {
+                min = min.min(*sample);
+                max = max.max(*sample);
+            }
 
-        let color = gradient.step(0.0);
-        let mut img = img.lock().unwrap();
+            let min_y = (min as u32 * (height - 1)) / 255;
+            let max_y = (max as u32 * (height - 1)) / 255;
 
+            (min_y, max_y)
+        })
+        .collect();
+
+    let color = gradient.step(0.0);
+    for (slice_index, &(min_y, max_y)) in column_data.iter().enumerate() {
         if min_y == max_y {
-            img.put_pixel(slice_index, min_y, color);
+            img.put_pixel(slice_index as u32, min_y, color);
         } else {
-            for y in min_y..max_y {
-                img.put_pixel(slice_index, y, color);
+            for y in min_y..=max_y {
+                img.put_pixel(slice_index as u32, y, color);
             }
         }
-    });
+    }
 
-    let img = img.into_inner().unwrap();
     img.save(out_path)?;
 
     Ok(())

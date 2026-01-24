@@ -1,5 +1,5 @@
-use crate::decode::midi::MidiTracks;
-use anyhow::anyhow;
+use crate::{decode::midi::MidiTracks, image::DrawError};
+
 use image::{ImageBuffer, Rgb};
 use std::path::Path;
 
@@ -9,14 +9,14 @@ pub fn draw_midi<P: AsRef<Path>>(
     size: (u32, u32),
     color: &Rgb<u8>,
     bg_color: &Rgb<u8>,
-) -> anyhow::Result<()> {
+) -> Result<(), DrawError> {
     if midi.tracks.is_empty() {
-        return Err(anyhow!("Decoded audio data is empty."));
+        return Err(DrawError::DecoderEmpty);
     }
 
     let (width, height) = size;
     if width < 1 || height < 1 {
-        return Err(anyhow!("Thumbnail size cannot be 0."));
+        return Err(DrawError::ThumbnailZero);
     }
 
     let mut img = ImageBuffer::from_fn(width, height, |_, _| *bg_color);

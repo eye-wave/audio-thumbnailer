@@ -1,7 +1,10 @@
 use crate::config::{AspectRatio, CoverConfig};
 use image::{DynamicImage, GenericImageView};
 
-pub fn load_and_resize(buffer: &[u8], config: &CoverConfig) -> anyhow::Result<DynamicImage> {
+pub fn load_and_resize(
+    buffer: &[u8],
+    config: &CoverConfig,
+) -> Result<DynamicImage, image::error::ImageError> {
     let size = config.size;
     let aspect_ratio = config.aspect_ratio.clone();
     let filter = config.interpolation.clone().into();

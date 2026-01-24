@@ -1,6 +1,6 @@
 use image::Rgb;
 
-pub fn parse_color(color: &str) -> anyhow::Result<Rgb<u8>> {
+pub fn parse_color(color: &str) -> Result<Rgb<u8>, csscolorparser::ParseColorError> {
     let parsed = csscolorparser::parse(color)?;
     let rgba = parsed.to_rgba8();
     let rgb = Rgb([rgba[0], rgba[1], rgba[2]]);

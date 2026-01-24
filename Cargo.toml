@@ -1,6 +1,6 @@
 [package]
 name = "audio-thumbnailer"
-version = "0.4.1"
+version = "0.4.2"
 edition = "2021"
 license = "MIT"
 authors = ["_eyewave"]
@@ -8,7 +8,7 @@ description = "Fast multipurpose thumbnailer for creating audio thumbnails on li
 repository = "https://github.com/eye-wave/audio-thumbnailer"
 
 [dependencies]
-anyhow = "^1.0.95"
+audio-formats = { path = "./audio-formats" }
 clap = { version = "^4.5.4", features = ["derive"] }
 csscolorparser = { version = "^0.6.2", features = ["rgb", "named-colors"] }
 image = "^0.25.1"
@@ -16,6 +16,10 @@ midly = "^0.5.3"
 ogg-opus = "^0.1.2"
 rayon = "^1.10.0"
 symphonia = { version = "^0.5.5", features = ["all"] }
+thiserror = "2.0.18"
+
+[build-dependencies]
+audio-formats = { path = "./audio-formats" }
 
 [profile.release]
 codegen-units = 1
@@ -25,3 +29,7 @@ incremental = false
 lto = true
 panic = "abort"
 strip = true
+
+[workspace]
+members = ["audio-formats"]
+resolver = "3"

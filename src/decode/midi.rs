@@ -18,7 +18,16 @@ pub struct Note {
     pub(crate) key: u8,
 }
 
-pub fn decode_midi<P: AsRef<Path>>(path: &P) -> anyhow::Result<MidiTracks> {
+#[derive(Debug, thiserror::Error)]
+pub enum MidiDecodeError {
+    #[error("{0}")]
+    Midi(#[from] midly::Error),
+
+    #[error("{0}")]
+    Io(#[from] std::io::Error),
+}
+
+pub fn decode_midi<P: AsRef<Path>>(path: &P) -> Result<MidiTracks, MidiDecodeError> {
     let bytes = fs::read(path.as_ref())?;
     let smf = Smf::parse(&bytes)?;
 

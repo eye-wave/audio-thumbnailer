@@ -1,4 +1,4 @@
 [Thumbnailer Entry]
 TryExec=/usr/bin/audio-thumbnailer
 Exec=/usr/bin/audio-thumbnailer -i %i -o %o
-MimeType=audio/aac;audio/flac;audio/midi;audio/mp2;audio/mp4;audio/mpeg;audio/x-aiff;audio/x-caf;audio/x-opus+ogg;audio/x-vorbis+ogg;audio/x-wav
+MimeType=audio/aac;audio/x-hx-aac-adts;audio/flac;audio/mp2;audio/mp4;audio/mpeg;audio/x-aiff;audio/x-caf;audio/x-vorbis+ogg;audio/x-wav;audio/x-opus+ogg;audio/ogg;audio/x-wavpack;audio/x-mpegurl;audio/midi
