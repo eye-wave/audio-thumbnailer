@@ -49,11 +49,13 @@ pub fn draw_waveform<P: AsRef<Path>>(
         })
         .collect();
 
-    for (slice_index, &(min_y, max_y)) in column_data.iter().enumerate() {
-        let range = (max_y - min_y).max(1);
+    let global_min_y = column_data.iter().map(|(min, _)| *min).min().unwrap();
+    let global_max_y = column_data.iter().map(|(_, max)| *max).max().unwrap();
+    let global_range = (global_max_y - global_min_y).max(1);
 
+    for (slice_index, &(min_y, max_y)) in column_data.iter().enumerate() {
         for y in min_y..=max_y {
-            let t = (y - min_y) as f32 / range as f32;
+            let t = (y - global_min_y) as f32 / global_range as f32;
             let color = gradient.step(t);
             img.put_pixel(slice_index as u32, y, color);
         }
