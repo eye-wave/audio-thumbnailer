@@ -36,34 +36,18 @@ impl VisualData {
         path: &P,
         config: &Config,
     ) -> Result<(), DrawError> {
+        let w = config.waveform.length;
+        let h = config.waveform.height;
+
+        let gradient = Gradient::new(&config.waveform.fill_color);
+        let bg_color = parse_color(&config.waveform.bg_color)?;
+
         match self {
-            Self::Samples(samples) => {
-                let w = config.waveform.length;
-                let h = config.waveform.height;
-
-                let gradient = Gradient::new(&config.waveform.fill_color);
-                let bg_color = parse_color(&config.waveform.bg_color)?;
-
-                draw_waveform(samples, &path, (w, h), &gradient, &bg_color)?;
-
-                Ok(())
-            }
+            Self::Samples(samples) => draw_waveform(samples, &path, (w, h), &gradient, &bg_color),
+            Self::Midi(midi) => draw_midi(midi, &path, (w, h), &gradient, &bg_color),
             Self::Pixels(image_data) => {
                 let image = load_and_resize(image_data, &config.cover)?;
-                write_image(image, &path)?;
-
-                Ok(())
-            }
-            Self::Midi(midi) => {
-                let w = config.waveform.length;
-                let h = config.waveform.height;
-
-                let color = parse_color(&config.waveform.fill_color[0])?;
-                let bg_color = parse_color(&config.waveform.bg_color)?;
-
-                draw_midi(midi, &path, (w, h), &color, &bg_color)?;
-
-                Ok(())
+                Ok(write_image(image, &path)?)
             }
         }
     }

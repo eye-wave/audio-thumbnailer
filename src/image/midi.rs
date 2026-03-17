@@ -1,4 +1,5 @@
-use crate::{decode::midi::MidiTracks, image::DrawError};
+use crate::decode::midi::MidiTracks;
+use crate::image::{color::Gradient, DrawError};
 
 use image::{ImageBuffer, Rgb};
 use std::path::Path;
@@ -7,7 +8,7 @@ pub fn draw_midi<P: AsRef<Path>>(
     midi: &MidiTracks,
     out_path: &P,
     size: (u32, u32),
-    color: &Rgb<u8>,
+    gradient: &Gradient,
     bg_color: &Rgb<u8>,
 ) -> Result<(), DrawError> {
     if midi.tracks.is_empty() {
@@ -39,7 +40,9 @@ pub fn draw_midi<P: AsRef<Path>>(
 
             for x in x1..x2 {
                 for y in y1..y2 {
-                    img.put_pixel(x, y, *color);
+                    let t = y as f32 / (height - 1) as f32;
+                    let color = gradient.step(t);
+                    img.put_pixel(x, y, color);
                 }
             }
         }
