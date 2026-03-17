@@ -50,8 +50,10 @@ pub fn draw_waveform<P: AsRef<Path>>(
         .collect();
 
     for (slice_index, &(min_y, max_y)) in column_data.iter().enumerate() {
+        let range = (max_y - min_y).max(1);
+
         for y in min_y..=max_y {
-            let t = y as f32 / (height - 1) as f32;
+            let t = (y - min_y) as f32 / range as f32;
             let color = gradient.step(t);
             img.put_pixel(slice_index as u32, y, color);
         }
