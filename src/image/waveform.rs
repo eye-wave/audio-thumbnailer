@@ -3,9 +3,7 @@ use std::path::Path;
 use image::{ImageBuffer, Rgb};
 use rayon::prelude::*;
 
-use crate::image::DrawError;
-
-use super::Gradient;
+use crate::image::{color::Gradient, DrawError};
 
 pub fn draw_waveform<P: AsRef<Path>>(
     samples: &[u8],
@@ -51,14 +49,11 @@ pub fn draw_waveform<P: AsRef<Path>>(
         })
         .collect();
 
-    let color = gradient.step(0.0);
     for (slice_index, &(min_y, max_y)) in column_data.iter().enumerate() {
-        if min_y == max_y {
-            img.put_pixel(slice_index as u32, min_y, color);
-        } else {
-            for y in min_y..=max_y {
-                img.put_pixel(slice_index as u32, y, color);
-            }
+        for y in min_y..=max_y {
+            let t = y as f32 / (height - 1) as f32;
+            let color = gradient.step(t);
+            img.put_pixel(slice_index as u32, y, color);
         }
     }
 

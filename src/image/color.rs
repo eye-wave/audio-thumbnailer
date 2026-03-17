@@ -19,6 +19,11 @@ impl Gradient {
             .filter_map(|color| parse_color(color).ok())
             .collect();
 
+        assert!(
+            !values.is_empty(),
+            "Gradient requires at least one valid color"
+        );
+
         Self { values }
     }
 
@@ -27,6 +32,10 @@ impl Gradient {
     }
 
     pub fn step(&self, step: f32) -> Rgb<u8> {
+        if self.values.is_empty() {
+            panic!("Gradient has no valid colors");
+        }
+
         if self.has_single_color() {
             return self.values[0];
         }
