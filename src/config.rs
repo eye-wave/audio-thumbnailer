@@ -69,10 +69,10 @@ pub struct WaveformConfig {
     pub bg_color: String,
 
     /// Fill color for the waveform. If more than one color is specified waveform will be drawn with a vertical gradient.
-    /// Up to 5 colors, evenly spaced.
+    /// Up to 20 colors, evenly spaced.
     ///
     /// example: --fill-color red blue
-    #[clap(long, default_value = "red", num_args = ..=5)]
+    #[clap(long, default_value = "red", num_args = ..=20)]
     pub fill_color: Vec<String>,
 
     /// Length of the waveform thumbnail in pixels
